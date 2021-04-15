@@ -11,4 +11,5 @@ This repo contains the exercises and the tutorials used for Unimore's HPC class 
 ### OpenMP Exercises
 The exercises related to OpenMP programming model can be found in the folder `openmp`. Here the list of currectly available classes:
 - `openmp\lab1`: OpenMP basics: *parallel*, *for-loop*, *sections*, and *tasking*.
+- `openmp\lab2`: OpenMP Advanced: *reduction*, *tasking*, *optimizations*.
 
