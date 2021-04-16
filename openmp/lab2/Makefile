@@ -24,6 +24,9 @@ all: $(EXE)
 run: $(EXE)
 	./$(EXE) $(EXT_ARGS)
 
+profile: $(EXE)
+	valgrind --tool=callgrind --dump-instr=yes --simulate-cache=yes --collect-jumps=yes ./$(EXE) $(EXT_ARGS)
+
 clean:
 	rm -f $(OBJS) *.o *.exe *.out *~
 
