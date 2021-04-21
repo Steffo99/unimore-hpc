@@ -4,6 +4,8 @@
 #include <time.h>
 #include <omp.h>
 
+#include "utils.h"
+
 #ifndef N
 #define N (1 << 10)
 #endif
