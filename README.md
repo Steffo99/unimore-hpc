@@ -13,3 +13,6 @@ The exercises related to OpenMP programming model can be found in the folder `op
 - `openmp\lab1`: OpenMP basics: *parallel*, *for-loop*, *sections*, and *tasking*.
 - `openmp\lab2`: OpenMP Advanced: *reduction*, *tasking*, *optimizations*.
 - `openmp\lab3`: OpenMP 4.x+: *Accelerator Model (targeting: Nvidia GP-GPU)*
+
+### CUDA Exercises
+- `cuda\lab1`: CUDA Basics.
