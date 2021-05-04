@@ -16,3 +16,4 @@ The exercises related to OpenMP programming model can be found in the folder `op
 
 ### CUDA Exercises
 - `cuda\lab1`: CUDA Basics.
+- `cuda\lab2`: CUDA Memory Model.
