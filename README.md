@@ -4,6 +4,7 @@ This repo contains the exercises and the tutorials used for Unimore's HPC class 
 
 ## Contacts
 - **Alessandro Capotondi** <[alessandro.capotondi@unimore.it](mailto:alessandro.capotondi@unimore.it)>
+- **Gianluca Brilli** <[gianluca.brilli@unimore.it](mailto:gianluca.brilli@unimore.it)>
 - **Prof. Andrea Marongiu** <[andrea.marongiu@unimore.it](mailto:andrea.marongiu@unimore.it)>
 
 ## Contents
@@ -19,6 +20,8 @@ The exercises related to OpenMP programming model can be found in the folder `op
 - `cuda\lab2`: CUDA Memory Model
 - `cuda\lab3`: CUDA Advanced Host Management
 - `cuda\appendix`: CUDA Nsight Tutorial
+
+### HLS Exercises
 
 ### (Optional)
 - `challenge`: Parallelize the code with everything you learned and submit the result before *21 May 2021*
