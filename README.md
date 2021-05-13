@@ -22,7 +22,7 @@ The exercises related to OpenMP programming model can be found in the folder `op
 - `cuda\appendix`: CUDA Nsight Tutorial
 
 ### HLS Exercises
-- `hls\lab1`: HLS Basics and hardware optimizations
+- `hls\lab1`: HLS Basics and hardware optimizations: Pipelining, Loop Fusion, Loop Unrolling and Array Partitioning 
 - `hls\lab2`: Tests on real development boards
 
 ### (Optional)
