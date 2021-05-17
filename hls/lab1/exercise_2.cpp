@@ -21,9 +21,6 @@ void nearest_neighbor(int *out, const int *points,
 
     int best_i = 0;
     int best_dist = INT_MAX;
-    int s_point[NUM_DIMS];
-
-    memcpy(s_point, search_point, NUM_DIMS*sizeof(int));
 
 	// TODO: merge upper_loop and lower loop
 	// TODO: insert pipeline directive
@@ -37,7 +34,7 @@ void nearest_neighbor(int *out, const int *points,
 
 			#pragma HLS LOOP_TRIPCOUNT max=num_dims min=num_dims
 
-        	int dx = points[dim*p + c] - s_point[c];
+        	int dx = points[dim*p + c] - search_point[c];
         	dist += dx * dx;
         }
 

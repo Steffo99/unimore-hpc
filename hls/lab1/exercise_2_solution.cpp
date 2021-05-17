@@ -22,9 +22,6 @@ void nearest_neighbor(int *out, const int *points,
 
     int best_i = 0;
     int best_dist = INT_MAX;
-    int s_point[NUM_DIMS];
-
-    memcpy(s_point, search_point, NUM_DIMS*sizeof(int));
 
     int dist = 0;
     int iterations = len * dim;
@@ -34,7 +31,7 @@ void nearest_neighbor(int *out, const int *points,
         	#pragma HLS PIPELINE
 			#pragma HLS LOOP_TRIPCOUNT max=max_iterations min=max_iterations
 
-            int dx = points[dim * p + c] - s_point[c];
+            int dx = points[dim * p + c] - search_point[c];
             dist += dx * dx;
             if (c == dim - 1) {
                 if (dist < best_dist) {
