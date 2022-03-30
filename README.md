@@ -1,11 +1,11 @@
 # High Performance Computing Class
 
-This repo contains the exercises and the tutorials used for Unimore's HPC class [https://dolly.fim.unimore.it/2020/course/view.php?id=145](https://dolly.fim.unimore.it/2020/course/view.php?id=145).
+This repo contains the exercises and the tutorials used for Unimore's HPC class
 
 ## Contacts
-- **Alessandro Capotondi** <[alessandro.capotondi@unimore.it](mailto:alessandro.capotondi@unimore.it)>
-- **Gianluca Brilli** <[gianluca.brilli@unimore.it](mailto:gianluca.brilli@unimore.it)>
 - **Prof. Andrea Marongiu** <[andrea.marongiu@unimore.it](mailto:andrea.marongiu@unimore.it)>
+- **Prof. Alessandro Capotondi** <[alessandro.capotondi@unimore.it](mailto:alessandro.capotondi@unimore.it)>
+- **Gianluca Brilli** <[gianluca.brilli@unimore.it](mailto:gianluca.brilli@unimore.it)>
 
 ## Contents
 
@@ -26,4 +26,4 @@ The exercises related to OpenMP programming model can be found in the folder `op
 - `hls\lab2`: Tests on real development boards
 
 ### (Optional)
-- `challenge`: Parallelize the code with everything you learned and submit the result before *21 May 2021*
+- `challenge`: Parallelize the code with everything you learned and submit the result before *XXX*
