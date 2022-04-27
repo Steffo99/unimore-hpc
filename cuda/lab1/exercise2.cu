@@ -143,7 +143,7 @@ int main(int argc, const char **argv)
 
     //TODO: ADD CUDA Data Move
     start_timer();
-    cudaMemcpy(h_x, d_x, sizeof(float) * n, cudaMemcpyDeviceToHost);
+    cudaMemcpy(d_x, h_x, sizeof(float) * n, cudaMemcpyHostToDevice);
 
     //TODO: Add kernel call here
 
