@@ -148,25 +148,20 @@ int main(int argc, const char **argv)
 
     start_timer();
     int TILE = n / N_STREAMS;
-    cudaStream_t stream[N_STREAMS];
-    for(int i = 0; i < N_STREAMS; i++)
-	    cudaStreamCreate(&stream[i]);
+    
+    //TODO Create N_STREAMS
 
     //TODO Loop over the Tiles
     for (int i = 0; i < n; i += TILE)
     {
-        //TODO Copy in Tile i (stream i)
-        gpuErrchk(cudaMemcpyAsync(&d_x[i], &h_x[i], sizeof(float) * TILE, cudaMemcpyHostToDevice, stream[i/TILE]));
-        gpuErrchk(cudaMemcpyAsync(&d_y[i], &h_y[i], sizeof(float) * TILE, cudaMemcpyHostToDevice, stream[i/TILE]));
+        //TODO Copy to device Tile i (over stream i)
+        
+        //TODO Execute Kernel Tile i (stream i)
 
-        //TODO Kernel Tile i (stream i)
-        gpu_saxpy<<<((TILE + BLOCK_SIZE - 1) / BLOCK_SIZE), BLOCK_SIZE,0,stream[i/TILE]>>>(&d_y[i], a, &d_x[i], TILE);
-
-        //TODO Copy out Tile i (stream i)
-        gpuErrchk(cudaMemcpyAsync(&h_y[i], &d_y[i], sizeof(float) * TILE, cudaMemcpyDeviceToHost,stream[i/TILE]));
+        //TODO Copy from device Tile i (stream i)
     }
     //TODO Wait all the streams...
-    cudaDeviceSynchronize();
+
     stop_timer();
     printf("saxpy (GPU): %9.3f sec %9.1f GFLOPS\n", elapsed_ns() / 1.0e9, 2 * n / ((float) elapsed_ns()));
 

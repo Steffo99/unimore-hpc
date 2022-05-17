@@ -73,10 +73,6 @@ extern "C"
 #define BLOCK_SIZE (512)
 #endif
 
-#ifndef N_STREAMS
-#define N_STREAMS (16)
-#endif
-
 /*
  *SAXPY (host implementation)
  * y := a * x + y
@@ -147,26 +143,22 @@ int main(int argc, const char **argv)
     gpuErrchk(cudaMalloc((void **)&d_y, sizeof(float) * n));
 
     start_timer();
-    int TILE = n / N_STREAMS;
-    cudaStream_t stream[N_STREAMS];
-    for(int i = 0; i < N_STREAMS; i++)
-	    cudaStreamCreate(&stream[i]);
+    int TILE = n / 8;
+    //TODO Copy to device the first input Tile (i=0)
 
     //TODO Loop over the Tiles
     for (int i = 0; i < n; i += TILE)
     {
-        //TODO Copy in Tile i (stream i)
-        gpuErrchk(cudaMemcpyAsync(&d_x[i], &h_x[i], sizeof(float) * TILE, cudaMemcpyHostToDevice, stream[i/TILE]));
-        gpuErrchk(cudaMemcpyAsync(&d_y[i], &h_y[i], sizeof(float) * TILE, cudaMemcpyHostToDevice, stream[i/TILE]));
+        //TODO Wait Tile i 
 
-        //TODO Kernel Tile i (stream i)
-        gpu_saxpy<<<((TILE + BLOCK_SIZE - 1) / BLOCK_SIZE), BLOCK_SIZE,0,stream[i/TILE]>>>(&d_y[i], a, &d_x[i], TILE);
+        //TODO Copy from the device the output tile i-1 (if i>0)
 
-        //TODO Copy out Tile i (stream i)
-        gpuErrchk(cudaMemcpyAsync(&h_y[i], &d_y[i], sizeof(float) * TILE, cudaMemcpyDeviceToHost,stream[i/TILE]));
+        //TODO Launch Kernel over tile i
+
+        //TODO Copy to the device the input tile i+=TILE (if i+TILE < n)
     }
-    //TODO Wait all the streams...
-    cudaDeviceSynchronize();
+    //TODO Copy out the last tile n-TILE
+    //TODO Wait last tile
     stop_timer();
     printf("saxpy (GPU): %9.3f sec %9.1f GFLOPS\n", elapsed_ns() / 1.0e9, 2 * n / ((float) elapsed_ns()));
 
@@ -181,15 +173,12 @@ int main(int argc, const char **argv)
         assert(iret == 0);
     }
 
+    //CUDA Buffer Allocation
     free(h_x);
     gpuErrchk(cudaFree(d_x));
     free(h_y);
     gpuErrchk(cudaFree(d_y));
     free(h_z);
-
-    for (int i=0; i<N_STREAMS; ++i) 
-      cudaStreamDestroy(stream[i]);
-
 
     // CUDA exit -- needed to flush printf write buffer
     cudaDeviceReset();

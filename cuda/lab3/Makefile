@@ -12,7 +12,7 @@ NVCC=$(CUDA_HOME)/bin/nvcc
 CXX=g++
 
 OPT:=-O2 -g
-NVOPT:=-Xcompiler -fopenmp -lineinfo -arch=sm_53 --ptxas-options=-v --use_fast_math `pkg-config --cflags --libs opencv4`
+NVOPT:=-Xcompiler -fopenmp -lineinfo `pkg-config --cflags --libs opencv4`
 
 CXXFLAGS:=$(OPT) -I. $(EXT_CXXFLAGS)
 LDFLAGS:=-lm -lcudart $(EXT_LDFLAGS)
@@ -47,7 +47,7 @@ run: $(EXE)
 	./$(EXE)
 
 profile: $(EXE)
-	sudo LD_LIBRARY_PATH=$(CUDA_HOME)/lib:/usr/ext/lib:${LD_LIBRARY_PATH} LIBRARY_PATH=/usr/ext/lib:${LIBRARY_PATH} nvprof ./$(EXE)
+	sudo LD_LIBRARY_PATH=$(CUDA_HOME)/lib:/usr/ext/lib:${LD_LIBRARY_PATH} LIBRARY_PATH=/usr/ext/lib:${LIBRARY_PATH} nvprof --unified-memory-profiling off ./$(EXE)
 
 metrics: $(EXE)
 	sudo LD_LIBRARY_PATH=$(CUDA_HOME)/lib:/usr/ext/lib:${LD_LIBRARY_PATH} LIBRARY_PATH=/usr/ext/lib:${LIBRARY_PATH} nvprof --print-gpu-trace --metrics "eligible_warps_per_cycle,achieved_occupancy,sm_efficiency,ipc" ./$(EXE)

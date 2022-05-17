@@ -70,28 +70,23 @@ extern "C"
 #endif
 
 #ifndef BLOCK_SIZE
-#define BLOCK_SIZE (128)
-#endif
-
-#ifndef N_STREAMS
-#define N_STREAMS (16)
+#define BLOCK_SIZE (512)
 #endif
 
 /*
  *SAXPY (host implementation)
  * y := a * x + y
  */
-void host_saxpy(float *__restrict__ y, float a, float *__restrict__ x, int n)
+void host_saxpy(float * __restrict__ y, float a, float * __restrict__ x, int n)
 {
-#pragma omp parallel for simd schedule(simd \
-                                       : static)
+#pragma omp parallel for simd schedule(simd: static)
     for (int i = 0; i < n; i++)
     {
         y[i] = a * x[i] + y[i];
     }
 }
 
-__global__ void gpu_saxpy(float *__restrict__ y, float a, float *__restrict__ x, int n)
+__global__ void gpu_saxpy(float * __restrict__ y, float a, float * __restrict__ x, int n)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < n)
@@ -102,8 +97,8 @@ int main(int argc, const char **argv)
 {
     int iret = 0;
     int n = N;
-    float *h_x;
-    float *h_y;
+    float *h_x, *d_x;
+    float *h_y, *d_y;
     float *h_z;
     float a = 101.0f / TWO02,
           b, c;
@@ -111,10 +106,16 @@ int main(int argc, const char **argv)
     if (argc > 1)
         n = atoi(argv[1]);
 
-    //CUDA Buffer Allocation
-    gpuErrchk(cudaMallocManaged((void **)&h_x, sizeof(float) * n));
-    gpuErrchk(cudaMallocManaged((void **)&h_y, sizeof(float) * n));
-
+    if (NULL == (h_x = (float *)malloc(sizeof(float) * n)))
+    {
+        printf("error: memory allocation for 'x'\n");
+        iret = -1;
+    }
+    if (NULL == (h_y = (float *)malloc(sizeof(float) * n)))
+    {
+        printf("error: memory allocation for 'y'\n");
+        iret = -1;
+    }
     if (NULL == (h_z = (float *)malloc(sizeof(float) * n)))
     {
         printf("error: memory allocation for 'z'\n");
@@ -122,8 +123,8 @@ int main(int argc, const char **argv)
     }
     if (0 != iret)
     {
-        gpuErrchk(cudaFree(h_x));
-        gpuErrchk(cudaFree(h_y));
+        free(h_x);
+        free(h_y);
         free(h_z);
         exit(EXIT_FAILURE);
     }
@@ -137,40 +138,58 @@ int main(int argc, const char **argv)
         h_y[i] = h_z[i] = c / (float)TWO04;
     }
 
-    start_timer();
-    int TILE = n / N_STREAMS;
-    cudaStream_t stream[N_STREAMS];
-    for (int i = 0; i < N_STREAMS; i++)
-        cudaStreamCreate(&stream[i]);
+    //CUDA Buffer Allocation
+    gpuErrchk(cudaMalloc((void **)&d_x, sizeof(float) * n));
+    gpuErrchk(cudaMalloc((void **)&d_y, sizeof(float) * n));
 
+    start_timer();
+    int TILE = n / 8;
+    //TODO Copy the first Tile (i=0)
+    gpuErrchk(cudaMemcpyAsync(&d_x[0], &h_x[0], sizeof(float) * TILE, cudaMemcpyHostToDevice));
+    gpuErrchk(cudaMemcpyAsync(&d_y[0], &h_y[0], sizeof(float) * TILE, cudaMemcpyHostToDevice));
     //TODO Loop over the Tiles
     for (int i = 0; i < n; i += TILE)
     {
-        //TODO Kernel Tile i (stream i)
-        gpu_saxpy<<<((TILE + BLOCK_SIZE - 1) / BLOCK_SIZE), BLOCK_SIZE, 0, stream[i / TILE]>>>(&h_y[i], a, &h_x[i], TILE);
+        //TODO Wait Tile i 
+        cudaDeviceSynchronize();
+
+        //TODO Copy the out tile i-1
+        if(i>0)
+            gpuErrchk(cudaMemcpyAsync(&h_y[i-TILE], &d_y[i-TILE], sizeof(float) * TILE, cudaMemcpyDeviceToHost));
+
+        //TODO Launch Kernel over tile i
+        gpu_saxpy<<<((TILE + BLOCK_SIZE - 1) / BLOCK_SIZE), BLOCK_SIZE>>>(&d_y[i], a, &d_x[i], TILE);
+
+        //TODO Copy the in tile i+=TILE
+        if(i+TILE < n){
+            gpuErrchk(cudaMemcpyAsync(&d_x[i+TILE], &h_x[i+TILE], sizeof(float) * TILE, cudaMemcpyHostToDevice));
+            gpuErrchk(cudaMemcpyAsync(&d_y[i+TILE], &h_y[i+TILE], sizeof(float) * TILE, cudaMemcpyHostToDevice));
+        }
     }
-    //TODO Wait all the streams...
+    //TODO Copy out the last tile n-TILE
+    gpuErrchk(cudaMemcpyAsync(&h_y[n-TILE], &d_y[n-TILE], sizeof(float) * TILE, cudaMemcpyDeviceToHost));
+    //TODO Wait last tile
     cudaDeviceSynchronize();
     stop_timer();
-    printf("saxpy (GPU): %9.3f sec %9.1f GFLOPS\n", elapsed_ns() / 1.0e9, 2 * n / ((float)elapsed_ns()));
+    printf("saxpy (GPU): %9.3f sec %9.1f GFLOPS\n", elapsed_ns() / 1.0e9, 2 * n / ((float) elapsed_ns()));
 
     //Check Matematical Consistency
     start_timer();
     host_saxpy(h_z, a, h_x, n);
     stop_timer();
-    printf("saxpy (Host): %9.3f sec %9.1f GFLOPS\n", elapsed_ns() / 1.0e9, 2 * n / ((float)elapsed_ns()));
+    printf("saxpy (Host): %9.3f sec %9.1f GFLOPS\n", elapsed_ns() / 1.0e9, 2 * n / ((float) elapsed_ns()));
     for (int i = 0; i < n; ++i)
     {
         iret = *(int *)(h_y + i) ^ *(int *)(h_z + i);
         assert(iret == 0);
     }
 
-    gpuErrchk(cudaFree(h_x));
-    gpuErrchk(cudaFree(h_y));
+    //CUDA Buffer Allocation
+    free(h_x);
+    gpuErrchk(cudaFree(d_x));
+    free(h_y);
+    gpuErrchk(cudaFree(d_y));
     free(h_z);
-
-    for (int i = 0; i < N_STREAMS; ++i)
-        cudaStreamDestroy(stream[i]);
 
     // CUDA exit -- needed to flush printf write buffer
     cudaDeviceReset();
