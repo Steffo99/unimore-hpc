@@ -10,6 +10,13 @@
 /* Default data type is double, default size is 4000. */
 #include "atax.h"
 
+// Workaround for the editor not finding M_PI
+// It is exclusive to the GNU C compiler
+// https://www.gnu.org/software/libc/manual/html_node/Mathematical-Constants.html
+#ifndef M_PI
+#define M_PI 3.141
+#endif
+
 /* Array initialization. */
 static void init_array(int nx, int ny,
                        DATA_TYPE POLYBENCH_2D(A, NX, NY, nx, ny),
