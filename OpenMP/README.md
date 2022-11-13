@@ -8,46 +8,46 @@
 
 ## Available Benchmarks
 
-### datamining
+### `datamining`
 
-* correlation
-* covariance
+* `datamining/correlation`
+* `datamining/covariance`
 
-### linear-algebra/kernels
+### `linear-algebra/kernels`
 
-* 2mm
-* 3mm
-* atax
-* bicg
-* cholesky
-* doitgen
-* gemm
-* gemver
-* gesummv
-* mvt
-* symm
-* syr2k
-* syrk
-* trisolv
-* trmm
+* `linear-algebra/kernels/2mm`
+* `linear-algebra/kernels/3mm`
+* `linear-algebra/kernels/atax`
+* `linear-algebra/kernels/bicg`
+* `linear-algebra/kernels/cholesky`
+* `linear-algebra/kernels/doitgen`
+* `linear-algebra/kernels/gemm`
+* `linear-algebra/kernels/gemver`
+* `linear-algebra/kernels/gesummv`
+* `linear-algebra/kernels/mvt`
+* `linear-algebra/kernels/symm`
+* `linear-algebra/kernels/syr2k`
+* `linear-algebra/kernels/syrk`
+* `linear-algebra/kernels/trisolv`
+* `linear-algebra/kernels/trmm`
 
-### linear-algebra/solvers
+### `linear-algebra/solvers`
 
-* durbin
-* dynprog
-* gramschmidt
-* lu
-* ludcmp
+* `linear-algebra/solvers/durbin`
+* `linear-algebra/solvers/dynprog`
+* `linear-algebra/solvers/gramschmidt`
+* `linear-algebra/solvers/lu`
+* `linear-algebra/solvers/ludcmp`
 
-### stencils
+### `stencils`
 
-* adi
-* convolution-2d
-* convolution-3d
-* fdtd-2d
-* jacobi-1d-imper
-* jacobi-2d-imper
-* seidel-2d
+* `stencils/adi`
+* `stencils/convolution-2d`
+* `stencils/convolution-3d`
+* `stencils/fdtd-2d`
+* `stencils/jacobi-1d-imper`
+* `stencils/jacobi-2d-imper`
+* `stencils/seidel-2d`
 
 ## Modifying Codes
 
