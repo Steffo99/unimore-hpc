@@ -1,4 +1,12 @@
-# Available Benchmarks
+# PolyBench/GPU-OpenMP 1.0
+
+> Copyright (c) 2013 the University of Delaware.
+> Contact: William Killian <killian@udel.edu>
+
+> Copyright (c) 2011-2012 the Ohio State University.
+> Contact: Louis-Noel Pouchet <pouchet@cse.ohio-state.edu>
+
+## Available Benchmarks
 
 ### datamining
 
