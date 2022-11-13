@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Atax" type="CLionNativeAppRunConfigurationType" nameIsGenerated="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" WORKING_DIR="file://$PROJECT_DIR$/OpenMP/linear-algebra/kernels/atax" PASS_PARENT_ENVS_2="true" PROJECT_NAME="unimore-hpc-1" TARGET_NAME="Atax" CONFIG_NAME="Atax" version="1" RUN_PATH="$PROJECT_DIR$/OpenMP/linear-algebra/kernels/atax/atax_acc">
+    <method v="2">
+      <option name="CLION.COMPOUND.BUILD" enabled="true" />
+    </method>
+  </configuration>
+</component>
