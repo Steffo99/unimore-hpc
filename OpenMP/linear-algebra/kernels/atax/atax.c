@@ -38,7 +38,6 @@ static void init_array(int nx, int ny,
    Can be used also to check the correctness of the output. */
 static void print_array(int nx,
                         DATA_TYPE POLYBENCH_1D(y, NX, nx))
-
 {
   int i;
 
