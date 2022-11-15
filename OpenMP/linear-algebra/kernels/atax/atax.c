@@ -24,11 +24,14 @@ static void init_array(int nx, int ny,
 {
   int i, j;
 
-  // TODO: Optimizable loop, every task has no dependencies on the other ones
-  for (i = 0; i < ny; i++)
+  // Parallelizing this causes a slowdown, as the cost of context-switches is greater than the cost of inlline execution
+  // #pragma omp parallel for num_threads(SOMETHING) schedule(static)
+  for (i = 0; i < ny; i++) {
     x[i] = i * M_PI;
+  }
 
-  // TODO: Optimizable loop, every task has no dependencies on the other ones
+  // Same here, but many times more
+  // #pragma omp parallel for num_threads(SOMETHING) schedule(static)
   for (i = 0; i < nx; i++)
     for (j = 0; j < ny; j++)
       A[i][j] = ((DATA_TYPE)i * (j + 1)) / nx;
@@ -113,7 +116,7 @@ int main(int argc, char **argv)
   /* Prevent dead-code elimination. All live-out data must be printed
      by the function call in argument. */
   polybench_prevent_dce(print_array(nx, POLYBENCH_ARRAY(y)));
-
+  
   /* Be clean. */
   POLYBENCH_FREE_ARRAY(A);
   POLYBENCH_FREE_ARRAY(x);
