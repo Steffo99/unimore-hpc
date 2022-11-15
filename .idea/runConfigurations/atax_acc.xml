@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="atax_acc" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" WORKING_DIR="file://$PROJECT_DIR$/OpenMP/linear-algebra/kernels/atax" PASS_PARENT_ENVS_2="true" PROJECT_NAME="unimore-hpc-1" TARGET_NAME="all" CONFIG_NAME="all" version="1" RUN_PATH="$PROJECT_DIR$/OpenMP/linear-algebra/kernels/atax/atax_acc">
+  <configuration default="false" name="atax_acc" type="CLionNativeAppRunConfigurationType" PROGRAM_PARAMS="-DEXTRALARGE_DATASET" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" WORKING_DIR="file://$PROJECT_DIR$/OpenMP/linear-algebra/kernels/atax" PASS_PARENT_ENVS_2="true" PROJECT_NAME="unimore-hpc-1" TARGET_NAME="all" CONFIG_NAME="all" version="1" RUN_PATH="$PROJECT_DIR$/OpenMP/linear-algebra/kernels/atax/atax_acc">
     <method v="2">
       <option name="CLION.COMPOUND.BUILD" enabled="true" />
     </method>

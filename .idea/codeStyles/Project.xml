@@ -12,6 +12,9 @@
       <option name="SPACE_AFTER_REFERENCE_IN_DECLARATION" value="true" />
       <option name="DISCHARGED_SHORT_TERNARY_OPERATOR" value="true" />
     </Objective-C>
+    <clangFormatSettings>
+      <option name="ENABLED" value="true" />
+    </clangFormatSettings>
     <files>
       <extensions>
         <pair source="cpp" header="hpp" fileNamingConvention="NONE" />
