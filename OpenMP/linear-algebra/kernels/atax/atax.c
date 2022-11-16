@@ -45,8 +45,7 @@ static void print_array(int nx,
 {
   int i;
 
-  // Cannot optimize this: prints have to be dependent on each other to make sense!
-
+  // Cannot parallelize this: prints have to be sequential to make sense!
   for (i = 0; i < nx; i++)
   {
     fprintf(stderr, DATA_PRINTF_MODIFIER, y[i]);
