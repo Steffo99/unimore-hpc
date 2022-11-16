@@ -65,7 +65,7 @@ static void kernel_atax(int nx, int ny,
 {
   int i, j;
 
-  // TODO: Optimizable loop, no dependencies
+  #pragma omp parallel for num_threads(4) schedule(static)
   for (i = 0; i < _PB_NY; i++)
     y[i] = 0;
   
