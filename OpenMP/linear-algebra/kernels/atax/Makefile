@@ -21,4 +21,4 @@ MAKEFLAGS+= --silent
 
 bench:
 	make clean all
-	./atax_acc
+	./.bench.sh
