@@ -13,6 +13,8 @@ CFLAGS+= -Wextra
 CFLAGS+= -O3 
 # -g3 enables some useful debug things
 CFLAGS+= -g3
+# -DTHREAD_COUNT allows us to alter the number of threads used in the whole file
+CFLAGS+= -DTHREAD_COUNT=4
 
 # Disable make output
 MAKEFLAGS+= --silent

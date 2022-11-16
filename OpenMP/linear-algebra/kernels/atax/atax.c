@@ -25,7 +25,7 @@ static void init_array(int nx, int ny,
   int i, j;
 
   /// Initialize the `x` array with PI and its multiples.
-  #pragma omp parallel for num_threads(4) schedule(static)
+  #pragma omp parallel for num_threads(THREAD_COUNT) schedule(static)
   for (i = 0; i < ny; i++) {
     x[i] = i * M_PI;
   }
@@ -64,7 +64,7 @@ static void kernel_atax(int nx, int ny,
 {
   int i, j;
 
-  #pragma omp parallel for num_threads(4) schedule(static)
+  #pragma omp parallel for num_threads(THREAD_COUNT) schedule(static)
   for (i = 0; i < _PB_NY; i++)
     y[i] = 0;
   
