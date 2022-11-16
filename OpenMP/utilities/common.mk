@@ -28,10 +28,10 @@ $(EXE) : $(SRC)
 	$(CC) $(CFLAGS) $(INCPATHS) $^ -o $@ $(LDFLAGS)
 
 clean :
-	-rm -vf -vf $(EXE) *~ 
+	-rm -f $(EXE) *~ 
 
 veryclean : clean
-	-rm -vf $(DEPS)
+	-rm -f $(DEPS)
 
 run: $(EXE)
 	./$(EXE)

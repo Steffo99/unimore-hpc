@@ -13,3 +13,6 @@ CFLAGS+= -Wextra
 CFLAGS+= -O3 
 # -g3 enables some useful debug things
 CFLAGS+= -g3
+
+# Disable make output
+MAKEFLAGS+= --silent
