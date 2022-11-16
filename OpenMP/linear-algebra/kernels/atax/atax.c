@@ -60,8 +60,7 @@ static void print_array(int nx,
 static void kernel_atax(int nx, int ny,
                         DATA_TYPE POLYBENCH_2D(A, NX, NY, nx, ny),
                         DATA_TYPE POLYBENCH_1D(x, NY, ny),
-                        DATA_TYPE POLYBENCH_1D(y, NY, ny),
-                        DATA_TYPE POLYBENCH_1D(tmp, NX, nx))
+                        DATA_TYPE POLYBENCH_1D(y, NY, ny))
 {
   int i, j;
 
@@ -74,15 +73,15 @@ static void kernel_atax(int nx, int ny,
   for (i = 0; i < _PB_NX; i++)
   {
     /// Every iteration has its own tmp variable
-    tmp[i] = 0;
+    DATA_TYPE tmp = 0;
     
     for (j = 0; j < _PB_NY; j++)
       /// Which gets increased by a bit on every iteration
-      tmp[i] += A[i][j] * x[j];
+      tmp += A[i][j] * x[j];
     
     for (j = 0; j < _PB_NY; j++)
       /// Which is later used for [something else]
-      y[j] = y[j] + A[i][j] * tmp[i];
+      y[j] = y[j] + A[i][j] * tmp;
   }
 }
 
@@ -96,7 +95,6 @@ int main(int argc, char **argv)
   POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, NX, NY, nx, ny);
   POLYBENCH_1D_ARRAY_DECL(x, DATA_TYPE, NY, ny);
   POLYBENCH_1D_ARRAY_DECL(y, DATA_TYPE, NY, ny);
-  POLYBENCH_1D_ARRAY_DECL(tmp, DATA_TYPE, NX, nx);
 
   /* Initialize array(s). */
   init_array(nx, ny, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(x));
@@ -108,8 +106,7 @@ int main(int argc, char **argv)
   kernel_atax(nx, ny,
               POLYBENCH_ARRAY(A),
               POLYBENCH_ARRAY(x),
-              POLYBENCH_ARRAY(y),
-              POLYBENCH_ARRAY(tmp));
+              POLYBENCH_ARRAY(y));
 
   /* Stop and print timer. */
   polybench_stop_instruments;
@@ -123,7 +120,6 @@ int main(int argc, char **argv)
   POLYBENCH_FREE_ARRAY(A);
   POLYBENCH_FREE_ARRAY(x);
   POLYBENCH_FREE_ARRAY(y);
-  POLYBENCH_FREE_ARRAY(tmp);
 
   return 0;
 }
