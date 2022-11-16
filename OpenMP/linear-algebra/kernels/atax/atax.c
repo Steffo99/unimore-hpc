@@ -31,8 +31,8 @@ static void init_array(int nx, int ny,
   }
 
   /// Initialize the `A` matrix with [something?]
-  // Using 4 threads here slows everything down: why?
-  // #pragma omp parallel for num_threads(4) schedule(static)
+  // Using 3-4 threads slow down the app
+  #pragma omp parallel for num_threads(2) schedule(static)
   for (i = 0; i < nx; i++)
     for (j = 0; j < ny; j++)
       A[i][j] = ((DATA_TYPE)i * (j + 1)) / nx;
@@ -70,7 +70,7 @@ static void kernel_atax(int nx, int ny,
     y[i] = 0;
   
   /// This computes... something? I guess whatever ATAX is?
-  // Trying to parallelize this only seems to increase the time required
+  #pragma omp parallel for num_threads(4) schedule(static)
   for (i = 0; i < _PB_NX; i++)
   {
     /// Every iteration has its own tmp variable
