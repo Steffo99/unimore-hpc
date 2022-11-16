@@ -32,7 +32,6 @@ static void init_array(int nx, int ny,
 
   /// Initialize the `A` matrix with [something?]
   // Using 4 threads here slows everything down: why?
-  // #pragma omp parallel for num_threads(4) schedule(static)
   for (i = 0; i < nx; i++)
     for (j = 0; j < ny; j++)
       A[i][j] = ((DATA_TYPE)i * (j + 1)) / nx;
@@ -71,12 +70,13 @@ static void kernel_atax(int nx, int ny,
   /// This computes... something? I guess whatever ATAX is?
   // Now this gives a nice speedup, especially with a lot more threads than the count!
   // THREAD_COUNT * 4 seems to be the best on my local computer. What's the best for the Jetson Nano?
-  #pragma omp parallel for num_threads(THREAD_COUNT * 4) schedule(static)
+  #pragma omp parallel for num_threads(THREAD_COUNT) schedule(static)
   for (i = 0; i < _PB_NX; i++)
   {
     /// Every iteration has its own tmp variable
     DATA_TYPE tmp = 0;
     
+    #pragma omp parallel for num_threads(THREAD_COUNT) reduction(+:tmp)
     for (j = 0; j < _PB_NY; j++)
       /// Which gets increased by a bit on every iteration
       tmp += A[i][j] * x[j];
@@ -98,11 +98,15 @@ int main(int argc, char **argv)
   POLYBENCH_1D_ARRAY_DECL(x, DATA_TYPE, NY, ny);
   POLYBENCH_1D_ARRAY_DECL(y, DATA_TYPE, NY, ny);
 
+  
+
   /* Initialize array(s). */
   init_array(nx, ny, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(x));
 
+
   /* Start timer. */
   polybench_start_instruments;
+  // polybench_start_instruments;
 
   /* Run kernel. */
   kernel_atax(nx, ny,
