@@ -24,8 +24,8 @@ static void init_array(int nx, int ny,
 {
   int i, j;
 
-  // Parallelizing this causes a slowdown, as the cost of context-switches is greater than the cost of inlline execution
-  // #pragma omp parallel for num_threads(SOMETHING) schedule(static)
+  /// Initialize the `x` array with PI and its multiples.
+  #pragma omp parallel for num_threads(4) schedule(static)
   for (i = 0; i < ny; i++) {
     x[i] = i * M_PI;
   }
