@@ -30,8 +30,9 @@ static void init_array(int nx, int ny,
     x[i] = i * M_PI;
   }
 
-  // Same here, but many times more
-  // #pragma omp parallel for num_threads(SOMETHING) schedule(static)
+  /// Initialize the `A` matrix with [something?]
+  // Using 4 threads here slows everything down: why?
+  // #pragma omp parallel for num_threads(4) schedule(static)
   for (i = 0; i < nx; i++)
     for (j = 0; j < ny; j++)
       A[i][j] = ((DATA_TYPE)i * (j + 1)) / nx;
