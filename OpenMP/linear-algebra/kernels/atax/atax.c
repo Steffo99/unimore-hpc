@@ -69,7 +69,9 @@ static void kernel_atax(int nx, int ny,
     y[i] = 0;
   
   /// This computes... something? I guess whatever ATAX is?
-  // Trying to parallelize this only seems to increase the time required
+  // Now this gives a nice speedup, especially with a lot more threads than the count!
+  // THREAD_COUNT * 4 seems to be the best on my local computer. What's the best for the Jetson Nano?
+  #pragma omp parallel for num_threads(THREAD_COUNT * 4) schedule(static)
   for (i = 0; i < _PB_NX; i++)
   {
     /// Every iteration has its own tmp variable
