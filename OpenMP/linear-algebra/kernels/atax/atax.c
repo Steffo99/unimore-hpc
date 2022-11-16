@@ -69,17 +69,19 @@ static void kernel_atax(int nx, int ny,
   for (i = 0; i < _PB_NY; i++)
     y[i] = 0;
   
-  // TODO: Optimizable loop, no dependencies
-  // actually tmp[i] could be a local variable
-  for (i = 0; i < _PB_NX; i++)
-    tmp[i] = 0;
-
-  // TODO: what do we do here?
+  /// This computes... something? I guess whatever ATAX is?
+  // Trying to parallelize this only seems to increase the time required
   for (i = 0; i < _PB_NX; i++)
   {
+    /// Every iteration has its own tmp variable
+    tmp[i] = 0;
+    
     for (j = 0; j < _PB_NY; j++)
-      tmp[i] = tmp[i] + A[i][j] * x[j];
+      /// Which gets increased by a bit on every iteration
+      tmp[i] += A[i][j] * x[j];
+    
     for (j = 0; j < _PB_NY; j++)
+      /// Which is later used for [something else]
       y[j] = y[j] + A[i][j] * tmp[i];
   }
 }
