@@ -16,3 +16,9 @@ CFLAGS+= -g3
 
 # Disable make output
 MAKEFLAGS+= --silent
+
+.PHONY: bench
+
+bench:
+	make clean all
+	./atax_acc
