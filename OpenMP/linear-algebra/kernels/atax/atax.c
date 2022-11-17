@@ -32,7 +32,7 @@ static void init_array(int nx, int ny,
     x[i] = i * M_PI;
   }
 
-  /// Initialize the `A` matrix with [something?]
+  /// Initialize the `A` matrix
   #ifdef TOGGLE_INIT_ARRAY_2
   #pragma omp parallel for num_threads(THREAD_COUNT) schedule(static)
   #endif
@@ -90,7 +90,7 @@ static void kernel_atax(int nx, int ny,
     }
     
     for (j = 0; j < _PB_NY; j++) {
-      /// Which is later used for [something else]
+      /// Which is later used for to compute ATAX
       y[j] = y[j] + A[i][j] * tmp;
     }
   }
