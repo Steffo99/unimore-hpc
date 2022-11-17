@@ -48,8 +48,6 @@ static void print_array(int nx,
   for (i = 0; i < nx; i++)
   {
     fprintf(stderr, DATA_PRINTF_MODIFIER, y[i]);
-    if (i % 20 == 0)
-      fprintf(stderr, "\n");
   }
   fprintf(stderr, "\n");
 }
