@@ -46,8 +46,7 @@ static void print_array(int nx,
 
   /// Print all numbers in the array sequentially.
   // Cannot parallelize this: prints have to be sequential to make sense!
-  for (i = 0; i < nx; i++)
-  {
+  for (i = 0; i < nx; i++) {
     fprintf(stderr, DATA_PRINTF_MODIFIER, y[i]);
   }
   fprintf(stderr, "\n");
