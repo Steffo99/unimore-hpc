@@ -76,7 +76,6 @@ static void kernel_atax(int nx, int ny,
     /// Every iteration has its own tmp variable
     DATA_TYPE tmp = 0;
     
-    #pragma omp parallel for num_threads(THREAD_COUNT) reduction(+:tmp)
     for (j = 0; j < _PB_NY; j++)
       /// Which gets increased by a bit on every iteration
       tmp += A[i][j] * x[j];
