@@ -104,7 +104,6 @@ int main(int argc, char **argv)
 
   /* Start timer. */
   polybench_start_instruments;
-  // polybench_start_instruments;
 
   /* Run kernel. */
   kernel_atax(nx, ny,
