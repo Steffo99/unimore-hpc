@@ -8,6 +8,7 @@ run_benchmarks() {
     do
         exet=$(./atax_acc)
         totalt=$(awk "BEGIN{print $totalt+$exet}")
+        echo -n "."
         # echo "Run #$i: " $(awk "BEGIN{printf(\"%.3g\", $exet)}") "seconds"
     done
 
