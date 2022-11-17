@@ -76,13 +76,15 @@ static void kernel_atax(int nx, int ny,
     /// Every iteration has its own tmp variable
     DATA_TYPE tmp = 0;
     
-    for (j = 0; j < _PB_NY; j++)
+    for (j = 0; j < _PB_NY; j++) {
       /// Which gets increased by a bit on every iteration
       tmp += A[i][j] * x[j];
+    }
     
-    for (j = 0; j < _PB_NY; j++)
+    for (j = 0; j < _PB_NY; j++) {
       /// Which is later used for [something else]
       y[j] = y[j] + A[i][j] * tmp;
+    }
   }
 }
 
