@@ -31,7 +31,7 @@ static void init_array(int nx, int ny,
   }
 
   /// Initialize the `A` matrix with [something?]
-  // Using 4 threads here slows everything down: why?
+  #pragma omp parallel for num_threads(THREAD_COUNT) schedule(static)
   for (i = 0; i < nx; i++)
     for (j = 0; j < ny; j++)
       A[i][j] = ((DATA_TYPE)i * (j + 1)) / nx;
