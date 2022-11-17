@@ -98,11 +98,8 @@ int main(int argc, char **argv)
   POLYBENCH_1D_ARRAY_DECL(x, DATA_TYPE, NY, ny);
   POLYBENCH_1D_ARRAY_DECL(y, DATA_TYPE, NY, ny);
 
-  
-
   /* Initialize array(s). */
   init_array(nx, ny, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(x));
-
 
   /* Start timer. */
   polybench_start_instruments;
