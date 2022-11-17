@@ -8,8 +8,6 @@ CFLAGS+= -Wall
 CFLAGS+= -Wextra 
 # -O3 applies all compiler optimization, improving from 800ms to 300ms
 CFLAGS+= -O3 
-# -g3 enables some useful debug things
-CFLAGS+= -g3
 # -DTHREAD_COUNT allows us to alter the number of threads used in the whole file
 CFLAGS+= -DTHREAD_COUNT=4
 # Extend CFLAGS with command line parameters
