@@ -1,14 +1,46 @@
 #!/bin/bash
 
-runs=9
-totalt=0.0
+run_benchmarks() {
+    runs=25
+    totalt=0.0
 
-for i in $(seq $runs)
+    for i in $(seq $runs)
+    do
+        exet=$(./atax_acc)
+        totalt=$(awk "BEGIN{print $totalt+$exet}")
+        # echo "Run #$i: " $(awk "BEGIN{printf(\"%.3g\", $exet)}") "seconds"
+    done
+
+    avgt=$(awk "BEGIN{print $totalt/$runs}")
+    echo "  Average of $runs runs: " $(awk "BEGIN{printf(\"%.3g\", $avgt)}") "seconds"
+}
+
+for c in $(seq 0 15)
 do
-    exet=$(./atax_acc)
-    totalt=$(awk "BEGIN{print $totalt+$exet}")
-    echo "Run #$i: " $(awk "BEGIN{printf(\"%.3g\", $exet)}") "seconds"
-done
+    cflags=""
 
-avgt=$(awk "BEGIN{print $totalt/$runs}")
-echo "Average: " $(awk "BEGIN{printf(\"%.3g\", $avgt)}") "seconds"
+    if (( $c & 1 ))
+    then
+        cflags="$cflags -DTOGGLE_INIT_ARRAY_1"
+    fi 
+
+    if (( $c & 2 ))
+    then
+        cflags="$cflags -DTOGGLE_INIT_ARRAY_2"
+    fi 
+
+    if (( $c & 4 ))
+    then
+        cflags="$cflags -DTOGGLE_KERNEL_ATAX_1"
+    fi 
+
+    if (( $c & 8 ))
+    then
+        cflags="$cflags -DTOGGLE_KERNEL_ATAX_2"
+    fi 
+
+    echo "Flags: $cflags"
+    make "EXTRA_CFLAGS=$cflags" clean all
+
+    run_benchmarks
+done

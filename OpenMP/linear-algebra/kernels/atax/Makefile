@@ -15,12 +15,14 @@ CFLAGS+= -O3
 CFLAGS+= -g3
 # -DTHREAD_COUNT allows us to alter the number of threads used in the whole file
 CFLAGS+= -DTHREAD_COUNT=4
+# Extend CFLAGS with command line parameters
+CFLAGS+= ${EXTRA_CFLAGS}
 
 # Disable make output
 MAKEFLAGS+= --silent
 
+
 .PHONY: bench
 
 bench:
-	make clean all
 	./.bench.sh
