@@ -32,9 +32,11 @@ static void init_array(int nx, int ny,
 
   /// Initialize the `A` matrix with [something?]
   #pragma omp parallel for num_threads(THREAD_COUNT) schedule(static)
-  for (i = 0; i < nx; i++)
-    for (j = 0; j < ny; j++)
+  for (i = 0; i < nx; i++) {
+    for (j = 0; j < ny; j++) {
       A[i][j] = ((DATA_TYPE)i * (j + 1)) / nx;
+    }
+  }
 }
 
 /* DCE code. Must scan the entire live-out data.
