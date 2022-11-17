@@ -44,6 +44,7 @@ static void print_array(int nx,
 {
   int i;
 
+  /// Print all numbers in the array sequentially.
   // Cannot parallelize this: prints have to be sequential to make sense!
   for (i = 0; i < nx; i++)
   {
