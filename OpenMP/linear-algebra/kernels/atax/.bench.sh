@@ -16,32 +16,35 @@ run_benchmarks() {
     echo "  Average of $runs runs: " $(awk "BEGIN{printf(\"%.3g\", $avgt)}") "seconds"
 }
 
-for c in $(seq 0 15)
+for dataset in MINI_DATASET SMALL_DATASET STANDARD_DATASET LARGE_DATASET EXTRALARGE_DATASET
 do
-    cflags=""
+    for c in $(seq 0 15)
+    do
+        cflags="-D$dataset"
 
-    if (( $c & 1 ))
-    then
-        cflags="$cflags -DTOGGLE_INIT_ARRAY_1"
-    fi 
+        if (( $c & 1 ))
+        then
+            cflags="$cflags -DTOGGLE_INIT_ARRAY_1"
+        fi 
 
-    if (( $c & 2 ))
-    then
-        cflags="$cflags -DTOGGLE_INIT_ARRAY_2"
-    fi 
+        if (( $c & 2 ))
+        then
+            cflags="$cflags -DTOGGLE_INIT_ARRAY_2"
+        fi 
 
-    if (( $c & 4 ))
-    then
-        cflags="$cflags -DTOGGLE_KERNEL_ATAX_1"
-    fi 
+        if (( $c & 4 ))
+        then
+            cflags="$cflags -DTOGGLE_KERNEL_ATAX_1"
+        fi 
 
-    if (( $c & 8 ))
-    then
-        cflags="$cflags -DTOGGLE_KERNEL_ATAX_2"
-    fi 
+        if (( $c & 8 ))
+        then
+            cflags="$cflags -DTOGGLE_KERNEL_ATAX_2"
+        fi 
 
-    echo "Flags: $cflags"
-    make "EXTRA_CFLAGS=$cflags" clean all
+        echo "Flags: $cflags"
+        make "EXTRA_CFLAGS=$cflags" clean all
 
-    run_benchmarks
+        run_benchmarks
+    done
 done

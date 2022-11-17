@@ -3,9 +3,6 @@
 
 # -DPOLYBENCH_TIME makes Polybench output the execution time of the program
 CFLAGS+= -DPOLYBENCH_TIME 
-# -DLARGE_DATASET increases the size of arrays, making everything easier to profile
-# Do not use EXTRALARGE_DATASET, int will overflow
-CFLAGS+= -DLARGE_DATASET
 # -Wall and -Wextra enable more warnings
 CFLAGS+= -Wall 
 CFLAGS+= -Wextra 
