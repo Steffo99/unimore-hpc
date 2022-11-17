@@ -106,12 +106,12 @@ int main(int argc, char **argv)
   POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, NX, NY, nx, ny);
   POLYBENCH_1D_ARRAY_DECL(x, DATA_TYPE, NY, ny);
   POLYBENCH_1D_ARRAY_DECL(y, DATA_TYPE, NY, ny);
+  
+  /* Start timer. */
+  polybench_start_instruments;
 
   /* Initialize array(s). */
   init_array(nx, ny, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(x));
-
-  /* Start timer. */
-  polybench_start_instruments;
 
   /* Run kernel. */
   kernel_atax(nx, ny,
