@@ -47,7 +47,7 @@ run: $(EXE)
 	./$(EXE)
 
 profile: $(EXE)
-	sudo LD_LIBRARY_PATH=$(CUDA_HOME)/lib:/usr/ext/lib:${LD_LIBRARY_PATH} LIBRARY_PATH=/usr/ext/lib:${LIBRARY_PATH} nvprof ./$(EXE)
+	sudo LD_LIBRARY_PATH=$(CUDA_HOME)/lib:/usr/ext/lib:${LD_LIBRARY_PATH} LIBRARY_PATH=/usr/ext/lib:${LIBRARY_PATH} $(CUDA_HOME)/bin/nvprof ./$(EXE)
 
 clean:
 	-rm -fr $(BUILD_DIR) *.exe *.out *~
