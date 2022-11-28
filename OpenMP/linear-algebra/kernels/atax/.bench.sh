@@ -6,7 +6,7 @@ run_benchmarks() {
 
     for i in $(seq $runs)
     do
-        exet=$(./atax_acc)
+        exet=$(./atax.elf)
         totalt=$(awk "BEGIN{print $totalt+$exet}")
         echo -n "."
         # echo "Run #$i: " $(awk "BEGIN{printf(\"%.3g\", $exet)}") "seconds"
@@ -43,7 +43,7 @@ do
         fi 
 
         echo "Flags: $cxxflags"
-        make --silent "EXTRA_CXXFLAGS=$cxxflags" clean all
+        make --silent "EXTRA_CXXFLAGS=$cxxflags" "atax.elf"
 
         run_benchmarks
     done
