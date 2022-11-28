@@ -14,7 +14,7 @@
 // It is exclusive to the GNU C compiler
 // https://www.gnu.org/software/libc/manual/html_node/Mathematical-Constants.html
 #ifndef M_PI
-#define M_PI 3.141
+  #define M_PI 3.141
 #endif
 
 /* Array initialization. */
