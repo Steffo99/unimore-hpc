@@ -1,7 +1,7 @@
 # -DPOLYBENCH_TIME makes Polybench output the execution time of the program
 CXXFLAGS+= -DPOLYBENCH_TIME
 # -O3 applies all compiler optimization, improving from 800ms to 300ms
-CXXFLAGS+= -O3 
+CXXFLAGS+= -O3
 # Extend CFLAGS with command line parameters
 CXXFLAGS+= ${EXTRA_CXXFLAGS}
 
