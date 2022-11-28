@@ -97,13 +97,13 @@ __host__ int main(int argc, char **argv)
 	POLYBENCH_1D_ARRAY_DECL(y, DATA_TYPE, NY, ny);
 
 	#ifdef POLYBENCH_INCLUDE_INIT
-	polybench_start_instruments;
+		polybench_start_instruments;
 	#endif
 
 	init_array(nx, ny, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(x));
 
 	#ifndef POLYBENCH_INCLUDE_INIT
-	polybench_start_instruments;
+		polybench_start_instruments;
 	#endif
 
 	kernel_atax(nx, ny, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(x), POLYBENCH_ARRAY(y));
