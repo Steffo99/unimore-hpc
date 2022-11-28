@@ -8,7 +8,7 @@
 
 /* Include benchmark-specific header. */
 /* Default data type is double, default size is 4000. */
-#include "atax.h"
+#include "atax.hu"
 
 // Workaround for the editor not finding M_PI
 // It is exclusive to the GNU C compiler

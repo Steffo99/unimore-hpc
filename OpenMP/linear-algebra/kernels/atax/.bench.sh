@@ -20,30 +20,30 @@ for dataset in MINI_DATASET SMALL_DATASET STANDARD_DATASET LARGE_DATASET EXTRALA
 do
     for c in $(seq 0 15)
     do
-        cflags="-D$dataset"
+        cxxflags="-D$dataset"
 
         if (( $c & 1 ))
         then
-            cflags="$cflags -DTOGGLE_INIT_ARRAY_1"
+            cxxflags="$cxxflags -DTOGGLE_INIT_ARRAY_1"
         fi 
 
         if (( $c & 2 ))
         then
-            cflags="$cflags -DTOGGLE_INIT_ARRAY_2"
+            cxxflags="$cxxflags -DTOGGLE_INIT_ARRAY_2"
         fi 
 
         if (( $c & 4 ))
         then
-            cflags="$cflags -DTOGGLE_KERNEL_ATAX_1"
+            cxxflags="$cxxflags -DTOGGLE_KERNEL_ATAX_1"
         fi 
 
         if (( $c & 8 ))
         then
-            cflags="$cflags -DTOGGLE_KERNEL_ATAX_2"
+            cxxflags="$cxxflags -DTOGGLE_KERNEL_ATAX_2"
         fi 
 
-        echo "Flags: $cflags"
-        make "EXTRA_CFLAGS=$cflags" clean all
+        echo "Flags: $cxxflags"
+        make "EXTRA_CXXFLAGS=$cxxflags" clean all
 
         run_benchmarks
     done
