@@ -2,9 +2,6 @@
 -include ../../../utilities/c2.mk
 
 
-# Disable make output
-MAKEFLAGS+= --silent
-
 # -DPOLYBENCH_TIME makes Polybench output the execution time of the program
 CXXFLAGS+= -DPOLYBENCH_TIME 
 # -Wall and -Wextra enable more warnings

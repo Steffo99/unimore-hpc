@@ -43,7 +43,7 @@ do
         fi 
 
         echo "Flags: $cxxflags"
-        make "EXTRA_CXXFLAGS=$cxxflags" clean all
+        make --silent "EXTRA_CXXFLAGS=$cxxflags" clean all
 
         run_benchmarks
     done
