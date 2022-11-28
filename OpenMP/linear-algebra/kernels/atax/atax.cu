@@ -25,17 +25,11 @@ static void init_array(int nx, int ny,
   int i, j;
 
   /// Initialize the `x` array with PI and its multiples.
-  #ifdef TOGGLE_INIT_ARRAY_1
-  #pragma omp parallel for num_threads(THREAD_COUNT) schedule(static)
-  #endif
   for (i = 0; i < ny; i++) {
     x[i] = i * M_PI;
   }
 
   /// Initialize the `A` matrix
-  #ifdef TOGGLE_INIT_ARRAY_2
-  #pragma omp parallel for num_threads(THREAD_COUNT) schedule(static)
-  #endif
   for (i = 0; i < nx; i++) {
     for (j = 0; j < ny; j++) {
       A[i][j] = ((DATA_TYPE)i * (j + 1)) / nx;
@@ -67,18 +61,12 @@ static void kernel_atax(int nx, int ny,
 {
   int i, j;
 
-  #ifdef TOGGLE_KERNEL_ATAX_1
-  #pragma omp parallel for num_threads(THREAD_COUNT) schedule(static)
-  #endif
   for (i = 0; i < _PB_NY; i++)
     y[i] = 0;
   
   /// This computes... something? I guess whatever ATAX is?
   // Now this gives a nice speedup, especially with a lot more threads than the count!
   // THREAD_COUNT * 4 seems to be the best on my local computer. What's the best for the Jetson Nano?
-  #ifdef TOGGLE_KERNEL_ATAX_2
-  #pragma omp parallel for num_threads(THREAD_COUNT) schedule(static)
-  #endif
   for (i = 0; i < _PB_NX; i++)
   {
     /// Every iteration has its own tmp variable
