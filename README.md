@@ -44,16 +44,16 @@ To reproduce the obtained results:
     $ git clone https://github.com/Steffo99/unimore-hpc-assignments
     ```
 
-2. Access our group's assigned folder:
-
-    ```console
-    $ cd unimore-hpc-1/OpenMP/linear-algebra/kernels/atax
-    ```
-
-3. Checkout the exact commit the tests were executed on:
+2. Checkout the exact commit the tests were executed on:
 
     ```console
     $ git checkout TBD
+    ```
+
+3. Access our group's assigned folder:
+
+    ```console
+    $ cd unimore-hpc-assignments/atax
     ```
 
 4. Run the benchmarking script:
