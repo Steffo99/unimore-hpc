@@ -8,21 +8,21 @@ Per compilare il codice a noi assegnato, è necessario:
 
 1. Accedere alla cartella in cui è contenuto:
    ```console
-   $ cd ./OpenMP/linear-algebra/kernels/atax
+   $ cd ./atax
    ```
 
 2. Eseguire il Makefile:
    ```console
-   $ make clean all
+   $ make atax.elf
    ```
 
 ## Come debuggare e profilare
 
-Ho configurato il [Makefile](OpenMP/linear-algebra/kernels/atax/Makefile) con un phony target che esegue il programma 9 volte e calcola il tempo di esecuzione medio:
+Ho configurato il [Makefile](OpenMP/linear-algebra/kernels/atax/Makefile) con un phony target che esegue il programma 25 volte e calcola il tempo di esecuzione medio:
 
 1. Accedere alla cartella in cui è contenuto:
    ```console
-   $ cd ./OpenMP/linear-algebra/kernels/atax
+   $ cd ./atax
    ```
 
 2. Eseguire il Makefile:
