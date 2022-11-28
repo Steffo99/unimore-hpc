@@ -47,9 +47,7 @@ __host__ static void init_array(int nx, int ny, DATA_TYPE POLYBENCH_2D(A, NX, NY
  */
 __host__ static void print_array(int nx, DATA_TYPE POLYBENCH_1D(y, NX, nx))
 {
-	int i;
-
-	for (i = 0; i < nx; i++) {
+	for (int i = 0; i < nx; i++) {
 		fprintf(stderr, DATA_PRINTF_MODIFIER, y[i]);
 	}
 	fprintf(stderr, "\n");
