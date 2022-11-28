@@ -63,7 +63,7 @@ __host__ static void print_array(int nx, DATA_TYPE POLYBENCH_1D(y, NX, nx))
  * 
  * Currently to be called on the CPU (uses the `__host__` qualifier), but we may probably want to change that soon.
  */
-__host__ static void kernel_atax(int nx, int ny, DATA_TYPE POLYBENCH_2D(A, NX, NY, nx, ny), DATA_TYPE POLYBENCH_1D(x, NY, ny), DATA_TYPE POLYBENCH_1D(y, NY, ny))
+__host__ static void kernel_atax(int nx, int ny, DATA_TYPE POLYBENCH_2D(A, NX, NY, nx, ny), DATA_TYPE POLYBENCH_1D(x, NY, ny), DATA_TYPE POLYBENCH_1D(y, NX, nx))
 {
 	for (int i = 0; i < _PB_NY; i++) {
 		y[i] = 0;
@@ -94,7 +94,7 @@ __host__ int main(int argc, char **argv)
 
 	POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, NX, NY, nx, ny);
 	POLYBENCH_1D_ARRAY_DECL(x, DATA_TYPE, NY, ny);
-	POLYBENCH_1D_ARRAY_DECL(y, DATA_TYPE, NY, ny);
+	POLYBENCH_1D_ARRAY_DECL(y, DATA_TYPE, NX, nx);
 
 	#ifdef POLYBENCH_INCLUDE_INIT
 		polybench_start_instruments;
