@@ -23,7 +23,10 @@ NVCFLAGS:=$(CXXFLAGS) $(NVOPT)
 	$(NVCC) $(NVCFLAGS) -c $< -o $@
 
 
-.PHONY: bench
+.PHONY: bench clean
 
 bench:
 	./.bench.sh
+
+clean:
+	rm *.elf *.cu.o
