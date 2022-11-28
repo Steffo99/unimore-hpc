@@ -25,8 +25,8 @@ NVCFLAGS:=$(CXXFLAGS) $(NVOPT)
 
 # Create an automake definition for .cu files
 $(BUILD_DIR)/%.cu.o: %.cu
-  $(MKDIR_P) $(dir $@)
-  $(NVCC) $(NVCFLAGS) -c $< -o $@
+	$(MKDIR_P) $(dir $@)
+	$(NVCC) $(NVCFLAGS) -c $< -o $@
 
 .PHONY: bench
 
