@@ -90,8 +90,6 @@ __host__ static void kernel_atax(DATA_TYPE** A, DATA_TYPE* x, DATA_TYPE* y)
 }
 
 
-
-
 /**
  * The main function of the benchmark, which sets up tooling to measure the time spent computing `kernel_atax`.
  * 
