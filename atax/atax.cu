@@ -87,8 +87,6 @@ __host__ static void kernel_atax(DATA_TYPE** A, DATA_TYPE* x, DATA_TYPE* y)
  */
 __host__ int main(int argc, char **argv)
 {
-	int nx = NX;
-	int ny = NY;
 
 	POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, NX, NY, nx, ny);
 	POLYBENCH_1D_ARRAY_DECL(x, DATA_TYPE, NY, ny);
