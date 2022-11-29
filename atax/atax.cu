@@ -99,19 +99,18 @@ __host__ static void kernel_atax(DATA_TYPE** A, DATA_TYPE* x, DATA_TYPE* y)
  */
 __host__ int main(int argc, char **argv)
 {
-
-	DATA_TYPE **A = new DATA_TYPE*[NX];
-	DATA_TYPE x[NY], y[NX];
-
-	for(size_t i=0; i<NX; i++)
+	DATA_TYPE** A = new DATA_TYPE*[NX] {};
+	for(int i = 0; i < NX; i++)
 	{
 		A[i] = new DATA_TYPE[NY];
 	}
 
+	DATA_TYPE* x = new DATA_TYPE[NY] {};
+	DATA_TYPE* y = new DATA_TYPE[NX] {};
+
 	#ifdef POLYBENCH_INCLUDE_INIT
 		polybench_start_instruments;
 	#endif
-
 
 	init_array(A, x);
 
