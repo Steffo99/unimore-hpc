@@ -25,12 +25,18 @@
  * 
  * To be called on the CPU (uses the `__host__` qualifier).
  */
-__host__ static void init_array(DATA_TYPE** A, DATA_TYPE* X)
+__host__ static void init_array(DATA_TYPE** A, DATA_TYPE* X, DATA_TYPE* Y)
 {
 	/* X = [ 3.14, 6.28, 9.42, ... ] */
 	for (unsigned int y = 0; y < NY; y++) 
 	{
 		X[y] = y * M_PI;
+	}
+
+	/* Y = [ 0.00, 0.00, 0.00, ... ] */
+	for (unsigned int x = 0; x < NY; x++) 
+	{
+		Y[x] = 0;
 	}
 
 	/*
@@ -78,11 +84,6 @@ __host__ static void print_array(DATA_TYPE* Y)
  */
 __host__ static void kernel_atax(DATA_TYPE** A, DATA_TYPE* X, DATA_TYPE* Y)
 {
-	for (unsigned int x = 0; x < NY; x++) 
-	{
-		Y[x] = 0;
-	}
-	
 	for (unsigned int x = 0; x < NX; x++) 
 	{
 		DATA_TYPE tmp = 0;
@@ -121,7 +122,7 @@ __host__ int main(int argc, char** argv)
 		polybench_start_instruments;
 	#endif
 
-	init_array(A, x);
+	init_array(A, x, y);
 
 	#ifndef POLYBENCH_INCLUDE_INIT
 		polybench_start_instruments;
