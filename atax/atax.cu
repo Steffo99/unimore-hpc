@@ -107,7 +107,7 @@ __host__ static void kernel_atax(DATA_TYPE** A, DATA_TYPE* X, DATA_TYPE* Y)
  */
 __host__ int main(int argc, char **argv)
 {
-	// A[NY][NX]
+	// A[NX][NY]
 	DATA_TYPE** A = new DATA_TYPE*[NX] {};
 	for(unsigned int x = 0; x < NX; x++)
 	{
