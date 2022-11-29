@@ -80,21 +80,21 @@ __host__ static void kernel_atax(DATA_TYPE** A, DATA_TYPE* X, DATA_TYPE* Y)
 {
 	for (unsigned int x = 0; x < NY; x++) 
 	{
-		Y[i] = 0;
+		Y[x] = 0;
 	}
 	
-	for (unsigned int i = 0; i < NX; i++) 
+	for (unsigned int x = 0; x < NX; x++) 
 	{
 		DATA_TYPE tmp = 0;
 		
-		for (unsigned int j = 0; j < NY; j++) 
+		for (unsigned int y = 0; y < NY; y++) 
 		{
-			tmp += A[i][j] * X[j];
+			tmp += A[x][y] * X[y];
 		}
 		
-		for (unsigned int j = 0; j < NY; j++) 
+		for (unsigned int y = 0; y < NY; y++) 
 		{
-			Y[j] = Y[j] + A[i][j] * tmp;
+			Y[y] = Y[y] + A[x][y] * tmp;
 		}
 	}
 }
