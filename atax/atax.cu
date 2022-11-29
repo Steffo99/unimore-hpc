@@ -109,9 +109,9 @@ __host__ int main(int argc, char **argv)
 {
 	// A[NY][NX]
 	DATA_TYPE** A = new DATA_TYPE*[NX] {};
-	for(unsigned int i = 0; i < NX; i++)
+	for(unsigned int x = 0; x < NX; x++)
 	{
-		A[i] = new DATA_TYPE[NY];
+		A[x] = new DATA_TYPE[NY];
 	}
 
 	DATA_TYPE* x = new DATA_TYPE[NY] {};
