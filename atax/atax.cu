@@ -42,8 +42,8 @@ __host__ static void init_array(DATA_TYPE** A, DATA_TYPE* x)
 }
 
 
-/** 
- * Print the given array. 
+/**
+ * Print the given array.
  * 
  * Cannot be parallelized, as the elements of the array should be 
  * 
