@@ -28,7 +28,7 @@
 __host__ static void init_array(DATA_TYPE** A, DATA_TYPE* X)
 {
 	/* X = [ 3.14, 6.28, 9.42, ... ] */
-	for (int y = 0; y < NY; y++) 
+	for (unsigned int y = 0; y < NY; y++) 
 	{
 		X[y] = y * M_PI;
 	}
@@ -42,11 +42,11 @@ __host__ static void init_array(DATA_TYPE** A, DATA_TYPE* X)
 	 *		...
 	 *	]
 	 */
-	for (int x = 0; x < NX; x++) 
+	for (unsigned int x = 0; x < NX; x++) 
 	{
-		for (int y = 0; y < NY; y++) 
+		for (unsigned int y = 0; y < NY; y++) 
 		{
-			A[x][y] = ((DATA_TYPE)x * (y + 1)) / NX;
+			A[x][y] = (DATA_TYPE)(x * (y + 1)) / NX;
 		}
 	}
 }
@@ -61,7 +61,7 @@ __host__ static void init_array(DATA_TYPE** A, DATA_TYPE* X)
  */
 __host__ static void print_array(DATA_TYPE* Y)
 {
-	for (int x = 0; x < NX; x++) 
+	for (unsigned int x = 0; x < NX; x++) 
 	{
 		fprintf(stderr, DATA_PRINTF_MODIFIER, Y[x]);
 	}
@@ -78,21 +78,21 @@ __host__ static void print_array(DATA_TYPE* Y)
  */
 __host__ static void kernel_atax(DATA_TYPE** A, DATA_TYPE* X, DATA_TYPE* Y)
 {
-	for (int x = 0; x < NY; x++) 
+	for (unsigned int x = 0; x < NY; x++) 
 	{
 		Y[i] = 0;
 	}
 	
-	for (int i = 0; i < NX; i++) 
+	for (unsigned int i = 0; i < NX; i++) 
 	{
 		DATA_TYPE tmp = 0;
 		
-		for (int j = 0; j < NY; j++) 
+		for (unsigned int j = 0; j < NY; j++) 
 		{
 			tmp += A[i][j] * X[j];
 		}
 		
-		for (int j = 0; j < NY; j++) 
+		for (unsigned int j = 0; j < NY; j++) 
 		{
 			Y[j] = Y[j] + A[i][j] * tmp;
 		}
