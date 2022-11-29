@@ -9,7 +9,7 @@ CXXFLAGS+= -O3
 CXXFLAGS+= ${EXTRA_CXXFLAGS}
 
 # Select the location of the local CUDA install
-CUDA_HOME:=/opt/cuda
+CUDA_HOME:=/usr/local/cuda-10.0
 # Specify the directory of the nvc compiler
 NVCC:=$(CUDA_HOME)/bin/nvcc
 # Specify the flags for the nvc compiler
