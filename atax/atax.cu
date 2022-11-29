@@ -108,33 +108,41 @@ __host__ static void kernel_atax(DATA_TYPE** A, DATA_TYPE* X, DATA_TYPE* Y)
  */
 __host__ int main(int argc, char** argv)
 {
-	// A[NX][NY]
-	DATA_TYPE** A = new DATA_TYPE*[NX] {};
-	for(unsigned int x = 0; x < NX; x++)
-	{
-		A[x] = new DATA_TYPE[NY] {};
-	}
+	#ifndef POLYBENCH_USE_CUDA
 
-	DATA_TYPE* x = new DATA_TYPE[NY] {};
-	DATA_TYPE* y = new DATA_TYPE[NX] {};
+		// A[NX][NY]
+		DATA_TYPE** A = new DATA_TYPE*[NX] {};
+		for(unsigned int x = 0; x < NX; x++)
+		{
+			A[x] = new DATA_TYPE[NY] {};
+		}
 
-	#ifdef POLYBENCH_INCLUDE_INIT
-		polybench_start_instruments;
+		DATA_TYPE* x = new DATA_TYPE[NY] {};
+		DATA_TYPE* y = new DATA_TYPE[NX] {};
+
+		#ifdef POLYBENCH_INCLUDE_INIT
+			polybench_start_instruments;
+		#endif
+
+		init_array(A, x, y);
+
+		#ifndef POLYBENCH_INCLUDE_INIT
+			polybench_start_instruments;
+		#endif
+
+		kernel_atax(A, x, y);
+
+		polybench_stop_instruments;
+		polybench_print_instruments;
+
+		/* Prevent dead-code elimination. All live-out data must be printed by the function call in argument. */
+		polybench_prevent_dce(print_array(y));
+
+	#else
+
+
+
 	#endif
-
-	init_array(A, x, y);
-
-	#ifndef POLYBENCH_INCLUDE_INIT
-		polybench_start_instruments;
-	#endif
-
-	kernel_atax(A, x, y);
-
-	polybench_stop_instruments;
-	polybench_print_instruments;
-
-	/* Prevent dead-code elimination. All live-out data must be printed by the function call in argument. */
-	polybench_prevent_dce(print_array(y));
 
 	return 0;
 }
