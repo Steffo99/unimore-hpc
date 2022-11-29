@@ -35,11 +35,11 @@ __host__ static void init_array(DATA_TYPE** A, DATA_TYPE* X)
 
 	/*
 	 *	A = [
-	 *		[       0,       0,       0,       0, ... ],
-	 *		[  1 / NX,  2 / NX,  3 / NX,  4 / NX, ... ],
-	 *		[  2 / NX,  4 / NX,  6 / NX,  8 / NX, ... ],
-	 *		[  3 / NX,  6 / NX,  9 / NX, 12 / NX, ... ],
-	 *		...
+	 *	  [       0,       0,       0,       0, ... ],
+	 *	  [  1 / NX,  2 / NX,  3 / NX,  4 / NX, ... ],
+	 *	  [  2 / NX,  4 / NX,  6 / NX,  8 / NX, ... ],
+	 *	  [  3 / NX,  6 / NX,  9 / NX, 12 / NX, ... ],
+	 *	  ...
 	 *	]
 	 */
 	for (unsigned int x = 0; x < NX; x++) 
