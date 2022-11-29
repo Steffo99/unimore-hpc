@@ -25,18 +25,28 @@
  * 
  * To be called on the CPU (uses the `__host__` qualifier).
  */
-__host__ static void init_array(DATA_TYPE** A, DATA_TYPE* x)
+__host__ static void init_array(DATA_TYPE** A, DATA_TYPE* X)
 {
-	for (int i = 0; i < NY; i++) 
+	/* X = [ 3.14, 6.28, 9.42, ... ] */
+	for (int y = 0; y < NY; y++) 
 	{
-		x[i] = i * M_PI;
+		X[y] = y * M_PI;
 	}
 
-	for (int i = 0; i < NX; i++) 
+	/*
+	 *	A = [
+	 *		[       0,       0,       0,       0, ... ],
+	 *		[  1 / NX,  2 / NX,  3 / NX,  4 / NX, ... ],
+	 *		[  2 / NX,  4 / NX,  6 / NX,  8 / NX, ... ],
+	 *		[  3 / NX,  6 / NX,  9 / NX, 12 / NX, ... ],
+	 *		...
+	 *	]
+	 */
+	for (int x = 0; x < NX; x++) 
 	{
-		for (int j = 0; j < NY; j++) 
+		for (int y = 0; y < NY; y++) 
 		{
-			A[i][j] = ((DATA_TYPE)i * (j + 1)) / NX;
+			A[x][y] = ((DATA_TYPE)x * (y + 1)) / NX;
 		}
 	}
 }
@@ -49,11 +59,11 @@ __host__ static void init_array(DATA_TYPE** A, DATA_TYPE* x)
  * 
  * To be called on the CPU (uses the `__host__` qualifier).
  */
-__host__ static void print_array(DATA_TYPE* y)
+__host__ static void print_array(DATA_TYPE* Y)
 {
-	for (int i = 0; i < NX; i++) 
+	for (int x = 0; x < NX; x++) 
 	{
-		fprintf(stderr, DATA_PRINTF_MODIFIER, y[i]);
+		fprintf(stderr, DATA_PRINTF_MODIFIER, Y[x]);
 	}
 	fprintf(stderr, "\n");
 }
@@ -66,11 +76,11 @@ __host__ static void print_array(DATA_TYPE* y)
  * 
  * Currently to be called on the CPU (uses the `__host__` qualifier), but we may probably want to change that soon.
  */
-__host__ static void kernel_atax(DATA_TYPE** A, DATA_TYPE* x, DATA_TYPE* y)
+__host__ static void kernel_atax(DATA_TYPE** A, DATA_TYPE* X, DATA_TYPE* Y)
 {
-	for (int i = 0; i < NY; i++) 
+	for (int x = 0; x < NY; x++) 
 	{
-		y[i] = 0;
+		Y[i] = 0;
 	}
 	
 	for (int i = 0; i < NX; i++) 
@@ -79,12 +89,12 @@ __host__ static void kernel_atax(DATA_TYPE** A, DATA_TYPE* x, DATA_TYPE* y)
 		
 		for (int j = 0; j < NY; j++) 
 		{
-			tmp += A[i][j] * x[j];
+			tmp += A[i][j] * X[j];
 		}
 		
 		for (int j = 0; j < NY; j++) 
 		{
-			y[j] = y[j] + A[i][j] * tmp;
+			Y[j] = Y[j] + A[i][j] * tmp;
 		}
 	}
 }
@@ -97,6 +107,7 @@ __host__ static void kernel_atax(DATA_TYPE** A, DATA_TYPE* x, DATA_TYPE* y)
  */
 __host__ int main(int argc, char **argv)
 {
+	// A[NY][NX]
 	DATA_TYPE** A = new DATA_TYPE*[NX] {};
 	for(int i = 0; i < NX; i++)
 	{
