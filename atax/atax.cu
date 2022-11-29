@@ -25,15 +25,15 @@
  * 
  * To be called on the CPU (uses the `__host__` qualifier).
  */
-__host__ static void init_array(int nx, int ny, DATA_TYPE POLYBENCH_2D(A, NX, NY, nx, ny), DATA_TYPE POLYBENCH_1D(x, NY, ny))
+__host__ static void init_array(DATA_TYPE** A, DATA_TYPE* x)
 {
-	for (int i = 0; i < ny; i++) {
+	for (int i = 0; i < NY; i++) {
 		x[i] = i * M_PI;
 	}
 
-	for (int i = 0; i < nx; i++) {
-		for (int j = 0; j < ny; j++) {
-			A[i][j] = ((DATA_TYPE)i * (j + 1)) / nx;
+	for (int i = 0; i < NX; i++) {
+		for (int j = 0; j < NY; j++) {
+			A[i][j] = ((DATA_TYPE)i * (j + 1)) / NX;
 		}
 	}
 }
@@ -45,7 +45,7 @@ __host__ static void init_array(int nx, int ny, DATA_TYPE POLYBENCH_2D(A, NX, NY
  * 
  * To be called on the CPU (uses the `__host__` qualifier).
  */
-__host__ static void print_array(int nx, DATA_TYPE POLYBENCH_1D(y, NX, nx))
+__host__ static void print_array(int nx, DATA_TYPE* y)
 {
 	for (int i = 0; i < nx; i++) {
 		fprintf(stderr, DATA_PRINTF_MODIFIER, y[i]);
@@ -61,20 +61,20 @@ __host__ static void print_array(int nx, DATA_TYPE POLYBENCH_1D(y, NX, nx))
  * 
  * Currently to be called on the CPU (uses the `__host__` qualifier), but we may probably want to change that soon.
  */
-__host__ static void kernel_atax(int nx, int ny, DATA_TYPE POLYBENCH_2D(A, NX, NY, nx, ny), DATA_TYPE POLYBENCH_1D(x, NY, ny), DATA_TYPE POLYBENCH_1D(y, NX, nx))
+__host__ static void kernel_atax(DATA_TYPE** A, DATA_TYPE* x, DATA_TYPE* y)
 {
-	for (int i = 0; i < _PB_NY; i++) {
+	for (int i = 0; i < NY; i++) {
 		y[i] = 0;
 	}
 	
-	for (int i = 0; i < _PB_NX; i++) {
+	for (int i = 0; i < NX; i++) {
 		DATA_TYPE tmp = 0;
 		
-		for (int j = 0; j < _PB_NY; j++) {
+		for (int j = 0; j < NY; j++) {
 			tmp += A[i][j] * x[j];
 		}
 		
-		for (int j = 0; j < _PB_NY; j++) {
+		for (int j = 0; j < NY; j++) {
 			y[j] = y[j] + A[i][j] * tmp;
 		}
 	}
@@ -98,23 +98,23 @@ __host__ int main(int argc, char **argv)
 		polybench_start_instruments;
 	#endif
 
-	init_array(nx, ny, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(x));
+	init_array(A, x);
 
 	#ifndef POLYBENCH_INCLUDE_INIT
 		polybench_start_instruments;
 	#endif
 
-	kernel_atax(nx, ny, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(x), POLYBENCH_ARRAY(y));
+	kernel_atax(A, x, y);
 
 	polybench_stop_instruments;
 	polybench_print_instruments;
 
 	/* Prevent dead-code elimination. All live-out data must be printed by the function call in argument. */
-	polybench_prevent_dce(print_array(nx, POLYBENCH_ARRAY(y)));
+	polybench_prevent_dce(print_array(y));
 	
-	POLYBENCH_FREE_ARRAY(A);
-	POLYBENCH_FREE_ARRAY(x);
-	POLYBENCH_FREE_ARRAY(y);
+	free(A);
+	free(x);
+	free(y);
 
 	return 0;
 }
