@@ -25,6 +25,8 @@ NVCFLAGS:=$(CXXFLAGS) $(NVOPT)
 
 .PHONY: bench clean
 
+all: atax.elf
+
 bench:
 	./.bench.sh
 
