@@ -18,18 +18,23 @@ run_benchmarks() {
 
 for dataset in MINI_DATASET SMALL_DATASET STANDARD_DATASET LARGE_DATASET EXTRALARGE_DATASET
 do
-    for c in $(seq 0 3)
+    for c in $(seq 0 7)
     do
         cxxflags="-D$dataset"
 
         if (( $c & 1 ))
         then
-            cxxflags="$cxxflags -DPOLYBENCH_INCLUDE_INIT"
+            cxxflags="$cxxflags -DHPC_INCLUDE_INIT"
         fi 
 
         if (( $c & 2 ))
         then
-            cxxflags="$cxxflags -DPOLYBENCH_USE_CUDA"
+            cxxflags="$cxxflags -DHPC_USE_CUDA"
+        fi
+
+        if (( $c & 2 ))
+        then
+            cxxflags="$cxxflags -DHPC_USE_STRIDE"
         fi
 
         echo "Flags: $cxxflags"
