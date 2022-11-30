@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/atax/atax.elf",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${fileDirname}",
+            "cwd": "${workspaceFolder}/atax",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
