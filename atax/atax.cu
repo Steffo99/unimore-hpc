@@ -95,7 +95,7 @@ __host__ static void kernel_atax(DATA_TYPE** A, DATA_TYPE* X, DATA_TYPE* Y)
 		
 		for (unsigned int y = 0; y < NY; y++) 
 		{
-			Y[y] = Y[y] + A[x][y] * tmp;
+			Y[y] += A[x][y] * tmp;
 		}
 	}
 }
