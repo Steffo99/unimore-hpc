@@ -126,26 +126,30 @@ __host__ int main(int argc, char** argv)
 			A[x] = new DATA_TYPE[NY] {};
 		}
 
-		DATA_TYPE* x = new DATA_TYPE[NY] {};
-		DATA_TYPE* y = new DATA_TYPE[NX] {};
+		// X[NY]
+		DATA_TYPE* X = new DATA_TYPE[NY] {};
+
+		// Y[NX]
+		DATA_TYPE* Y = new DATA_TYPE[NX] {};
 
 		#ifdef POLYBENCH_INCLUDE_INIT
 			polybench_start_instruments;
 		#endif
 
-		init_array(A, x, y);
+		init_array(A, X, Y);
 
 		#ifndef POLYBENCH_INCLUDE_INIT
 			polybench_start_instruments;
 		#endif
 
-		kernel_atax(A, x, y);
+		kernel_atax(A, X, Y);
 
 		polybench_stop_instruments;
 		polybench_print_instruments;
 
-		/* Prevent dead-code elimination. All live-out data must be printed by the function call in argument. */
-		polybench_prevent_dce(print_array(y));
+		polybench_prevent_dce(
+			print_array(Y)
+		);
 
 	#else
 

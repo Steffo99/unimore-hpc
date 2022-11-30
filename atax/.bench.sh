@@ -18,29 +18,19 @@ run_benchmarks() {
 
 for dataset in MINI_DATASET SMALL_DATASET STANDARD_DATASET LARGE_DATASET EXTRALARGE_DATASET
 do
-    for c in $(seq 0 15)
+    for c in $(seq 0 3)
     do
         cxxflags="-D$dataset"
 
         if (( $c & 1 ))
         then
-            cxxflags="$cxxflags -DTOGGLE_INIT_ARRAY_1"
+            cxxflags="$cxxflags -DPOLYBENCH_INCLUDE_INIT"
         fi 
 
         if (( $c & 2 ))
         then
-            cxxflags="$cxxflags -DTOGGLE_INIT_ARRAY_2"
-        fi 
-
-        if (( $c & 4 ))
-        then
-            cxxflags="$cxxflags -DTOGGLE_KERNEL_ATAX_1"
-        fi 
-
-        if (( $c & 8 ))
-        then
-            cxxflags="$cxxflags -DTOGGLE_KERNEL_ATAX_2"
-        fi 
+            cxxflags="$cxxflags -DPOLYBENCH_USE_CUDA"
+        fi
 
         echo "Flags: $cxxflags"
         make --silent "EXTRA_CXXFLAGS=$cxxflags" "atax.elf"
