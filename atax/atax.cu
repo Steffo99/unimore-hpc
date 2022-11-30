@@ -76,7 +76,16 @@ __host__ static void print_array(DATA_TYPE* Y)
 
 
 /**
- * Compute ATAX.
+ * Compute ATAX :
+ * - A is the input matrix
+ * - X is an input vector
+ * - Y is the result vector
+ * 
+ * In particular:
+ * ```
+ * A * (A * X) = Y
+ * ```
+ * Wait, there's no transposition here?!?
  * 
  * Parallelizing this is the goal of the assignment.
  * 
