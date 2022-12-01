@@ -31,6 +31,9 @@
 // TODO: Remove this, as it will be set by .bench.sh
 #define HPC_USE_STRIDE
 
+// Create macro for debug logging
+#define debug(txt) std::cerr << txt << std::endl
+
 
 /**
  * Initialize the arrays to be used in the computation:
@@ -72,26 +75,6 @@ __host__ static void init_array(DATA_TYPE** A, DATA_TYPE* X, DATA_TYPE* Y)
 			A[x][y] = (DATA_TYPE)(x * (y + 1)) / NX;
 		}
 	}
-}
-#endif
-
-/**
- * Initialize the arrays to be used in the computation:
- * 
- * - `X` is filled with multiples of `M_PI`;
- * - `Y` is zeroed;
- * - `A` is filled with sample data.
- * 
- * It is called by the host, runs on the device, and calls the other init_arrays on the device.
- */
-#ifdef HPC_USE_CUDA
-__global__ static void init_array_cuda(DATA_TYPE** A, DATA_TYPE* X, DATA_TYPE* Y)
-{
-	unsigned int threads = gridDim.x * blockDim.x;
-
-	init_array_cuda_x(X, threads);
-	init_array_cuda_y(Y, threads);
-	init_array_cuda_a(A, threads);
 }
 #endif
 
@@ -161,9 +144,40 @@ __device__ static void init_array_cuda_y(DATA_TYPE* Y, unsigned int threads)
  * Runs on the device.
 */
 #ifdef HPC_USE_CUDA
-__device__ static void init_array_cuda_a(DATA_TYPE** A, unsigned int threads)
+__device__ static void init_array_cuda_a(DATA_TYPE* A, unsigned int threads)
 {
+	// Find how many elements should be written in total
+	unsigned int elements = NX * NY;
 
+	// Find how many iterations should be performed by each thread
+	unsigned int perThread = elements / threads;
+
+	// Find the index of the current thread, even if threads span multiple blocks
+	int blockThreadIdx = blockIdx.x * blockDim.x + threadIdx.x;
+
+	/* TODO */
+}
+#endif
+
+/**
+ * Initialize the arrays to be used in the computation:
+ * 
+ * - `X` is filled with multiples of `M_PI`;
+ * - `Y` is zeroed;
+ * - `A` is filled with sample data.
+ * 
+ * Beware that `A` here is a simple array, it is not a matrix, so elements are accessed via [y * NX + x] (I think?).
+ * 
+ * It is called by the host, runs on the device, and calls the other init_arrays on the device.
+ */
+#ifdef HPC_USE_CUDA
+__global__ static void init_array_cuda(DATA_TYPE* A, DATA_TYPE* X, DATA_TYPE* Y)
+{
+	unsigned int threads = gridDim.x * blockDim.x;
+
+	init_array_cuda_x(X, threads);
+	init_array_cuda_y(Y, threads);
+	init_array_cuda_a(A, threads);
 }
 #endif
 
@@ -226,7 +240,13 @@ __host__ static void kernel_atax(DATA_TYPE** A, DATA_TYPE* X, DATA_TYPE* Y)
  */
 __host__ int main(int argc, char** argv)
 {
+	debug("Starting main...");
+
 	#ifndef HPC_USE_CUDA
+
+		debug("[Mode] Host-only");
+
+		debug("[Pointers] Allocating...");
 
 		// A[NX][NY]
 		DATA_TYPE** A = new DATA_TYPE*[NX] {};
@@ -241,56 +261,86 @@ __host__ int main(int argc, char** argv)
 		// Y[NX]
 		DATA_TYPE* Y = new DATA_TYPE[NX] {};
 
+		debug("[Pointers] Allocated!");
+
 		#ifdef HPC_INCLUDE_INIT
+			debug("[Benchmark] Starting...");
 			polybench_start_instruments;
 		#endif
 
+		debug("[Init] Initializing...");
 		init_array(A, X, Y);
+		debug("[Init] Initialized!");
 
 		#ifndef HPC_INCLUDE_INIT
+			debug("[Benchmark] Starting...");
 			polybench_start_instruments;
 		#endif
 
+		debug("[Kernel] Running...");
 		kernel_atax(A, X, Y);
+		debug("[Kernel] Completed!");
 
+		debug("[Benchmark] Stopping...");
 		polybench_stop_instruments;
 		polybench_print_instruments;
+		debug("[Benchmark] Complete!");
 
+		debug("[Verify] Printing...")
 		polybench_prevent_dce(
 			print_array(Y)
 		);
+		debug("[Verify] Done!")
 
 	#else
+	
+		debug("[Mode] Host-and-device, CUDA");
 
-		DATA_TYPE** A;
+		debug("[Pointers] Allocating...");
+		DATA_TYPE* A;
 		DATA_TYPE* X;
 		DATA_TYPE* Y;
 		
-		if(cudaMalloc(&A, sizeof(DATA_TYPE) * NX * NY)) 
+		debug("[CUDA] Allocating A...");
+		if(cudaMalloc((void**)&A, sizeof(DATA_TYPE) * NX * NY)) 
 		{
-			std::cerr << "Could not allocate A on the device\n";
+			debug("[CUDA] Could not allocate A!");
 			return 1;
 		}
+		debug("[CUDA] Allocated A!");
 		
-		if(cudaMalloc(&X, sizeof(DATA_TYPE) * NY))
+		debug("[CUDA] Allocating X...");
+		if(cudaMalloc((void**)&X, sizeof(DATA_TYPE) * NY))
 		{
-			std::cerr << "Could not allocate X on the device\n";
+			debug("[CUDA] Could not allocate X!");
 			return 1;
 		}
+		debug("[CUDA] Allocated X!");
 
-		if(cudaMalloc(&Y, sizeof(DATA_TYPE) * NX))
+		debug("[CUDA] Allocating Y...");
+		if(cudaMalloc((void**)&Y, sizeof(DATA_TYPE) * NX))
 		{
-			std::cerr << "Could not allocate Y on the device\n";
+			debug("[CUDA] Could not allocate Y!");
 			return 1;
 		}
+		debug("[CUDA] Allocated Y!");
 
 		#ifdef POLYBENCH_INCLUDE_INIT
+			debug("[Benchmark] Starting...");
 			polybench_start_instruments;
 		#endif
 
-		init_array_cuda<<<1, 1>>>(A, X, Y);
+		debug("[Init] Initializing...");
+		init_array_cuda<<<32, 32>>>((double*) A, (double*) X, (double*) Y);
+		if(cudaGetLastError())
+		{
+			debug("[Init] Failed to execute kernel!");
+			return 1;
+		}
+		debug("[Init] Initialized!");
 
 		#ifndef POLYBENCH_INCLUDE_INIT
+			debug("[Benchmark] Starting...");
 			polybench_start_instruments;
 		#endif
 

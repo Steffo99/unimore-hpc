@@ -23,9 +23,10 @@ NVCFLAGS:=$(CXXFLAGS) $(NVOPT)
 	$(NVCC) $(NVCFLAGS) -c $< -o $@
 
 
-.PHONY: bench clean
+.PHONY: bench clean dev
 
-all: atax.elf
+dev: atax.elf
+	./atax.elf
 
 bench:
 	./.bench.sh
