@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include <iostream>
+#include <string>
 
 /* Include polybench common header. */
 #include "polybench.hu"
@@ -23,16 +24,34 @@
 	#define CUDA_NTHREADS 128
 #endif
 
-// Enable syntax highlighting for the CUDA mode
-// TODO: Remove this, as it will be set by .bench.sh
-#define HPC_USE_CUDA
 
-// Enable syntax highlighting for the stride mode
-// TODO: Remove this, as it will be set by .bench.sh
-#define HPC_USE_STRIDE
+/**
+ * Given a `x` and a `y`, compute the relative index of the element in the `A` matrix.
+ */
+__host__ __device__ inline static unsigned int a_index(unsigned int x, unsigned int y) {
+	return x * NY + y;
+}
 
-// Create macro for debug logging
-#define debug(txt) std::cerr << txt << std::endl
+/**
+ * Log a debug message.
+ */
+__host__ inline static void print_debug(std::string txt) {
+	#ifdef HPC_DEBUG
+		std::cerr << txt << std::endl;
+	#endif
+}
+
+/**
+ * Log an error message.
+ */
+#ifdef HPC_USE_CUDA
+__host__ inline static void print_cudaError(cudaError_t err, std::string txt) {
+	#ifdef HPC_DEBUG
+		std::cerr << txt;
+		fprintf( stderr, ": error in file '%s' in line %i: %s.\n", __FILE__, __LINE__, cudaGetErrorString(err) );
+	#endif
+}
+#endif
 
 
 /**
@@ -45,7 +64,7 @@
  * To be called on the CPU (uses the `__host__` qualifier).
  */
 #ifndef HPC_USE_CUDA
-__host__ static void init_array(DATA_TYPE** A, DATA_TYPE* X, DATA_TYPE* Y)
+__host__ static void init_array(DATA_TYPE* A, DATA_TYPE* X, DATA_TYPE* Y)
 {
 	/* X = [ 3.14, 6.28, 9.42, ... ] */
 	for (unsigned int y = 0; y < NY; y++) 
@@ -72,7 +91,7 @@ __host__ static void init_array(DATA_TYPE** A, DATA_TYPE* X, DATA_TYPE* Y)
 	{
 		for (unsigned int y = 0; y < NY; y++) 
 		{
-			A[x][y] = (DATA_TYPE)(x * (y + 1)) / NX;
+			A[a_index(x, y)] = (DATA_TYPE)(x * (y + 1)) / NX;
 		}
 	}
 }
@@ -87,20 +106,21 @@ __host__ static void init_array(DATA_TYPE** A, DATA_TYPE* X, DATA_TYPE* Y)
 __device__ static void init_array_cuda_x(DATA_TYPE* X, unsigned int threads)
 {
 	// Find how many iterations should be performed by each thread
-	unsigned int perThread = NY / threads;
+	unsigned int perThread = NY / threads + 1;
 
 	// Find the index of the current thread, even if threads span multiple blocks
 	int blockThreadIdx = blockIdx.x * blockDim.x + threadIdx.x;
 	
 	// Have each thread perform the previously determined number of iterations
-	for(int stride = 0; stride < perThread; stride++) {
+	for(int stride = 0; stride < perThread; stride++)
+	{
 		// Find the index of the current iteration
 		// This is equal to `y` of the init_array function
-		int iterationIdx = blockThreadIdx * stride;
+		unsigned int iterationIdx = threads * stride + blockThreadIdx;
 
 		// Prevent the thread from accessing unallocated memory
-		if(iterationIdx < NY) {
-
+		if(iterationIdx < NY)
+		{
 			// Set the array element
 			X[iterationIdx] = iterationIdx * M_PI;
 		}
@@ -117,20 +137,21 @@ __device__ static void init_array_cuda_x(DATA_TYPE* X, unsigned int threads)
 __device__ static void init_array_cuda_y(DATA_TYPE* Y, unsigned int threads)
 {
 	// Find how many iterations should be performed by each thread
-	unsigned int perThread = NX / threads;
+	unsigned int perThread = NX / threads + 1;
 
 	// Find the index of the current thread, even if threads span multiple blocks
 	int blockThreadIdx = blockIdx.x * blockDim.x + threadIdx.x;
 	
 	// Have each thread perform the previously determined number of iterations
-	for(int stride = 0; stride < perThread; stride++) {
+	for(int stride = 0; stride < perThread; stride++) 
+	{
 		// Find the index of the current iteration
 		// This is equal to `y` of the init_array function
-		int iterationIdx = blockThreadIdx * stride;
+		unsigned int iterationIdx = threads * stride + blockThreadIdx;
 
 		// Prevent the thread from accessing unallocated memory
-		if(iterationIdx < NX) {
-
+		if(iterationIdx < NX) 
+		{
 			// Set the array element
 			Y[iterationIdx] = 0;
 		}
@@ -150,12 +171,29 @@ __device__ static void init_array_cuda_a(DATA_TYPE* A, unsigned int threads)
 	unsigned int elements = NX * NY;
 
 	// Find how many iterations should be performed by each thread
-	unsigned int perThread = elements / threads;
+	unsigned int perThread = elements / threads + 1;
 
 	// Find the index of the current thread, even if threads span multiple blocks
 	int blockThreadIdx = blockIdx.x * blockDim.x + threadIdx.x;
 
-	/* TODO */
+	// Have each thread perform the previously determined number of iterations
+	for(int stride = 0; stride < perThread; stride++) 
+	{
+		// Find the index of the current iteration
+		// This is equal to `y` of the init_array function
+		unsigned int iterationIdx = threads * stride + blockThreadIdx;
+
+		// Determine current x and y
+		unsigned int y = iterationIdx % NY;
+		unsigned int x = iterationIdx / NY;
+
+		// Prevent the thread from accessing unallocated memory
+		if(iterationIdx < elements) 
+		{
+			// Set the array element
+			A[iterationIdx] = (DATA_TYPE)(x * (y + 1)) / NX;
+		}
+	}
 }
 #endif
 
@@ -188,11 +226,11 @@ __global__ static void init_array_cuda(DATA_TYPE* A, DATA_TYPE* X, DATA_TYPE* Y)
  * 
  * To be called on the CPU (uses the `__host__` qualifier).
  */
-__host__ static void print_array(DATA_TYPE* Y)
+__host__ static void print_array(DATA_TYPE* Z, unsigned int size)
 {
-	for (unsigned int x = 0; x < NX; x++) 
+	for (unsigned int z = 0; z < size; z++) 
 	{
-		fprintf(stderr, DATA_PRINTF_MODIFIER, Y[x]);
+		fprintf(stderr, DATA_PRINTF_MODIFIER, Z[z]);
 	}
 	fprintf(stderr, "\n");
 }
@@ -212,25 +250,79 @@ __host__ static void print_array(DATA_TYPE* Y)
  * 
  * Parallelizing this is the goal of the assignment.
  * 
- * Currently to be called on the CPU (uses the `__host__` qualifier), but we may probably want to change that soon.
+ * To be called on the CPU (uses the `__host__` qualifier).
  */
-__host__ static void kernel_atax(DATA_TYPE** A, DATA_TYPE* X, DATA_TYPE* Y)
+#ifndef HPC_USE_CUDA
+__host__ static void kernel_atax(DATA_TYPE* A, DATA_TYPE* X, DATA_TYPE* Y)
 {
-	for (unsigned int x = 0; x < NX; x++) 
+	for (unsigned int x = 0; x < NY; x++) 
 	{
 		DATA_TYPE tmp = 0;
 		
-		for (unsigned int y = 0; y < NY; y++) 
+		for (unsigned int y = 0; y < NX; y++) 
 		{
-			tmp += A[x][y] * X[y];
+			tmp += A[a_index(x, y)] * X[y];
 		}
 		
-		for (unsigned int y = 0; y < NY; y++) 
+		for (unsigned int y = 0; y < NX; y++) 
 		{
-			Y[y] += A[x][y] * tmp;
+			Y[x] += A[a_index(x, y)] * tmp;
 		}
 	}
 }
+#endif
+
+
+/**
+ * Compute ATAX :
+ * - A is the input matrix
+ * - X is an input vector
+ * - Y is the result vector
+ * 
+ * In particular:
+ * ```
+ * A * (A * X) = Y
+ * ```
+ * Wait, there's no transposition here?!?
+ * 
+ * Parallelizing this is the goal of the assignment.
+ * 
+ * To be called on the device as a kernel (uses the `__global__` qualifier).
+ */
+#ifdef HPC_USE_CUDA
+__global__ static void kernel_atax_cuda(DATA_TYPE* A, DATA_TYPE* X, DATA_TYPE* Y)
+{
+	// Find out how many threads there are
+	unsigned int threads = gridDim.x * blockDim.x;
+
+	// Find how many iterations should be performed by each thread
+	unsigned int perThread = NX / threads + 1;
+
+	// Find the index of the current thread, even if threads span multiple blocks
+	unsigned int blockThreadIdx = blockIdx.x * blockDim.x + threadIdx.x;
+
+	// Have each thread perform the previously determined number of iterations
+	for(int stride = 0; stride < perThread; stride++) 
+	{
+		unsigned int x = threads * stride + blockThreadIdx;
+		
+		if(x < NX) 
+		{
+			DATA_TYPE tmp = 0;
+
+			for (unsigned int y = 0; y < NX; y++) 
+			{
+				tmp += A[a_index(x, y)] * X[y];
+			}
+
+			for (unsigned int y = 0; y < NX; y++) 
+			{
+				atomicAdd(&Y[x], A[a_index(x, y)] * tmp);
+			}
+		}
+	}
+}
+#endif
 
 
 /**
@@ -240,143 +332,180 @@ __host__ static void kernel_atax(DATA_TYPE** A, DATA_TYPE* X, DATA_TYPE* Y)
  */
 __host__ int main(int argc, char** argv)
 {
-	debug("Starting main...");
+	print_debug("[Main] Starting...");
+	std::cerr << "[Main] NX is: " << NX << std::endl;
+	std::cerr << "[Main] NY is: " << NY << std::endl;
 
 	#ifndef HPC_USE_CUDA
 
-		debug("[Mode] Host-only");
+		print_debug("[Mode] Host-only");
 
-		debug("[Pointers] Allocating...");
+		print_debug("[Pointers] Allocating...");
 
-		// A[NX][NY]
-		DATA_TYPE** A = new DATA_TYPE*[NX] {};
-		for(unsigned int x = 0; x < NX; x++)
-		{
-			A[x] = new DATA_TYPE[NY] {};
-		}
+		DATA_TYPE* A = new DATA_TYPE[NX * NY];
+		DATA_TYPE* X = new DATA_TYPE[NY];
+		DATA_TYPE* Y = new DATA_TYPE[NX];
 
-		// X[NY]
-		DATA_TYPE* X = new DATA_TYPE[NY] {};
-
-		// Y[NX]
-		DATA_TYPE* Y = new DATA_TYPE[NX] {};
-
-		debug("[Pointers] Allocated!");
+		print_debug("[Pointers] Allocated!");
 
 		#ifdef HPC_INCLUDE_INIT
-			debug("[Benchmark] Starting...");
+			print_debug("[Benchmark] Starting...");
 			polybench_start_instruments;
 		#endif
 
-		debug("[Init] Initializing...");
+		print_debug("[Init] Initializing...");
 		init_array(A, X, Y);
-		debug("[Init] Initialized!");
+		print_debug("[Init] Initialized!");
 
 		#ifndef HPC_INCLUDE_INIT
-			debug("[Benchmark] Starting...");
+			print_debug("[Benchmark] Starting...");
 			polybench_start_instruments;
 		#endif
 
-		debug("[Kernel] Running...");
+		print_debug("[Kernel] Running...");
 		kernel_atax(A, X, Y);
-		debug("[Kernel] Completed!");
+		print_debug("[Kernel] Completed!");
 
-		debug("[Benchmark] Stopping...");
+		print_debug("[Benchmark] Stopping...");
 		polybench_stop_instruments;
 		polybench_print_instruments;
-		debug("[Benchmark] Complete!");
+		print_debug("[Benchmark] Complete!");
 
-		debug("[Verify] Printing...")
+		#ifdef HPC_DEBUG
+			print_debug("[Debug] Displaying A:");
+			print_array(A, NX * NY);
+			print_debug("[Debug] Displaying X:");
+			print_array(X, NY);
+			print_debug("[Debug] Displaying Y:");
+			print_array(Y, NX);
+		#endif
+
+		print_debug("[Verify] Printing...");
 		polybench_prevent_dce(
-			print_array(Y)
+			print_array(Y, NX)
 		);
-		debug("[Verify] Done!")
+		print_debug("[Verify] Done!");
 
 	#else
 	
-		debug("[Mode] Host-and-device, CUDA");
+		print_debug("[Mode] Host-and-device, CUDA");
 
-		debug("[Pointers] Allocating...");
+		print_debug("[Pointers] Allocating...");
 		DATA_TYPE* A;
 		DATA_TYPE* X;
 		DATA_TYPE* Y;
+		DATA_TYPE* host_A = new DATA_TYPE[NX * NY];
+		DATA_TYPE* host_X = new DATA_TYPE[NY];
+		DATA_TYPE* host_Y = new DATA_TYPE[NX];
 		
-		debug("[CUDA] Allocating A...");
-		if(cudaMalloc((void**)&A, sizeof(DATA_TYPE) * NX * NY)) 
+		print_debug("[CUDA] Allocating A...");
+		if(cudaError_t err = cudaMalloc((void**)&A, sizeof(DATA_TYPE) * NX * NY)) 
 		{
-			debug("[CUDA] Could not allocate A!");
+			print_cudaError(err, "[CUDA] Could not allocate A!");
 			return 1;
 		}
-		debug("[CUDA] Allocated A!");
+		print_debug("[CUDA] Allocated A!");
 		
-		debug("[CUDA] Allocating X...");
-		if(cudaMalloc((void**)&X, sizeof(DATA_TYPE) * NY))
+		print_debug("[CUDA] Allocating X...");
+		if(cudaError_t err = cudaMalloc((void**)&X, sizeof(DATA_TYPE) * NY))
 		{
-			debug("[CUDA] Could not allocate X!");
+			print_cudaError(err, "[CUDA] Could not allocate X!");
 			return 1;
 		}
-		debug("[CUDA] Allocated X!");
+		print_debug("[CUDA] Allocated X!");
 
-		debug("[CUDA] Allocating Y...");
-		if(cudaMalloc((void**)&Y, sizeof(DATA_TYPE) * NX))
+		print_debug("[CUDA] Allocating Y...");
+		if(cudaError_t err = cudaMalloc((void**)&Y, sizeof(DATA_TYPE) * NX))
 		{
-			debug("[CUDA] Could not allocate Y!");
+			print_cudaError(err, "[CUDA] Could not allocate Y!");
 			return 1;
 		}
-		debug("[CUDA] Allocated Y!");
+		print_debug("[CUDA] Allocated Y!");
 
 		#ifdef POLYBENCH_INCLUDE_INIT
-			debug("[Benchmark] Starting...");
+			print_debug("[Benchmark] Starting...");
 			polybench_start_instruments;
 		#endif
 
-		debug("[Init] Initializing...");
+		print_debug("[Init] Initializing...");
 		init_array_cuda<<<32, 32>>>((double*) A, (double*) X, (double*) Y);
-		if(cudaGetLastError())
+		if(cudaError_t err = cudaGetLastError())
 		{
-			debug("[Init] Failed to execute kernel!");
+			print_cudaError(err, "[Init] Failed to execute kernel!");
 			return 1;
 		}
-		debug("[Init] Initialized!");
+		print_debug("[Init] Complete!");
 
 		#ifndef POLYBENCH_INCLUDE_INIT
-			debug("[Benchmark] Starting...");
+			print_debug("[Benchmark] Starting...");
 			polybench_start_instruments;
 		#endif
 
-		// kernel_atax_cuda<<<1, 1>>>();
+		print_debug("[Kernel] Running...");
+		kernel_atax_cuda<<<32, 32>>>((double*) A, (double*) X, (double*) Y);
+		print_debug("[Kernel] Complete!");
 
+		print_debug("[CUDA] Copying A back...");
+		if(cudaError_t err = cudaMemcpy(host_A, A, sizeof(DATA_TYPE) * NX * NY, cudaMemcpyDeviceToHost)) {
+			print_cudaError(err, "[CUDA] Could copy A back!");
+			return 1;
+		};
+		print_debug("[CUDA] Copied A back!");
+
+		print_debug("[CUDA] Copying X back...");
+		if(cudaError_t err = cudaMemcpy(host_X, X, sizeof(DATA_TYPE) * NY, cudaMemcpyDeviceToHost)) {
+			print_cudaError(err, "[CUDA] Could copy X back!");
+			return 1;
+		};
+		print_debug("[CUDA] Copied X back!");
+
+		print_debug("[CUDA] Copying Y back...");
+		if(cudaError_t err = cudaMemcpy(host_Y, Y, sizeof(DATA_TYPE) * NX, cudaMemcpyDeviceToHost)) {
+			print_cudaError(err, "[CUDA] Could copy Y back!");
+			return 1;
+		};
+		print_debug("[CUDA] Copied Y back!");
+
+		print_debug("[Benchmark] Stopping...");
 		polybench_stop_instruments;
 		polybench_print_instruments;
+		print_debug("[Benchmark] Complete!");
 
-		// Y = cudaMemcpy();
-
-		debug("[CUDA] Freeing A...");
-		if(cudaFree(A)) {
-			debug("[CUDA] Could not free A!");
+		print_debug("[CUDA] Freeing A...");
+		if(cudaError_t err = cudaFree(A)) {
+			print_cudaError(err, "[CUDA] Could not free A!");
 			return 1;
 		}
-		debug("[CUDA] Freed A!");
+		print_debug("[CUDA] Freed A!");
 
-		debug("[CUDA] Freeing X...");
-		if(cudaFree(X)) {
-			debug("[CUDA] Could not free X!");
+		print_debug("[CUDA] Freeing X...");
+		if(cudaError_t err = cudaFree(X)) {
+			print_cudaError(err, "[CUDA] Could not free X!");
 			return 1;
 		}
-		debug("[CUDA] Freed X!");
+		print_debug("[CUDA] Freed X!");
 
-		debug("[CUDA] Freeing Y...");
-		if(cudaFree(Y)) {
-			debug("[CUDA] Could not free Y!");
+		print_debug("[CUDA] Freeing Y...");
+		if(cudaError_t err = cudaFree(Y)) {
+			print_cudaError(err, "[CUDA] Could not free Y!");
 			return 1;
 		}
-		debug("[CUDA] Freed Y!");
+		print_debug("[CUDA] Freed Y!");
 
-		/*
+		#ifdef HPC_DEBUG
+			print_debug("[Debug] Displaying A:");
+			print_array(host_A, NX * NY);
+			print_debug("[Debug] Displaying X:");
+			print_array(host_X, NY);
+			print_debug("[Debug] Displaying Y:");
+			print_array(host_Y, NX);
+		#endif
+
+		print_debug("[Verify] Printing...");
 		polybench_prevent_dce(
-			print_array(Y)
+			print_array(host_Y, NX)
 		);
-		*/
+		print_debug("[Verify] Done!");
 
 	#endif
 

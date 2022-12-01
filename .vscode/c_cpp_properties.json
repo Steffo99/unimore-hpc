@@ -6,7 +6,7 @@
                 "${workspaceFolder}/**"
             ],
             "defines": [],
-            "compilerPath": "/usr/local/cuda-10.0/bin/nvcc",
+            "compilerPath": "/opt/cuda/bin/nvcc",
             "cStandard": "c11",
             "cppStandard": "c++14",
             "configurationProvider": "ms-vscode.makefile-tools"

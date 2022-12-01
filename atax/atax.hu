@@ -3,14 +3,23 @@
 	#define ATAX_H
 
 	/* Default to STANDARD_DATASET. */
-	#if !defined(MINI_DATASET) && !defined(SMALL_DATASET) && !defined(STANDARD_DATASET) && !defined(LARGE_DATASET) && !defined(EXTRALARGE_DATASET)
-		#define STANDARD_DATASET
+	#if !defined(NANO_DATASET) && !defined(MINI_DATASET) && !defined(SMALL_DATASET) && !defined(STANDARD_DATASET) && !defined(LARGE_DATASET) && !defined(EXTRALARGE_DATASET)
+		#ifdef HPC_DEBUG
+			#define NANO_DATASET
+		#else
+			#define EXTRALARGE_DATASET
+		#endif
 	#endif
 
 	/* Do not define anything if the user manually defines the size. */
 	# if !defined(NX) && !defined(NY)
 
 		/* Define the possible dataset sizes. */
+
+		#ifdef NANO_DATASET
+			#define NX 3
+			#define NY 5
+		#endif
 
 		#ifdef MINI_DATASET
 			#define NX 32

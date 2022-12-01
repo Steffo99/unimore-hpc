@@ -1,12 +1,12 @@
 #!/bin/bash
 
 run_benchmarks() {
-    runs=25
+    runs=3
     totalt=0.0
 
     for i in $(seq $runs)
     do
-        exet=$(./atax.elf)
+        exet=$(./atax.elf 2> /dev/null)
         totalt=$(awk "BEGIN{print $totalt+$exet}")
         echo -n "."
         # echo "Run #$i: " $(awk "BEGIN{printf(\"%.3g\", $exet)}") "seconds"
@@ -16,9 +16,9 @@ run_benchmarks() {
     echo "  Average of $runs runs: " $(awk "BEGIN{printf(\"%.3g\", $avgt)}") "seconds"
 }
 
-for dataset in MINI_DATASET SMALL_DATASET STANDARD_DATASET LARGE_DATASET EXTRALARGE_DATASET
+for dataset in EXTRALARGE_DATASET LARGE_DATASET STANDARD_DATASET SMALL_DATASET MINI_DATASET
 do
-    for c in $(seq 0 7)
+    for c in $(seq 0 3)
     do
         cxxflags="-D$dataset"
 
@@ -32,12 +32,8 @@ do
             cxxflags="$cxxflags -DHPC_USE_CUDA"
         fi
 
-        if (( $c & 2 ))
-        then
-            cxxflags="$cxxflags -DHPC_USE_STRIDE"
-        fi
-
         echo "Flags: $cxxflags"
+        make --silent "clean"
         make --silent "EXTRA_CXXFLAGS=$cxxflags" "atax.elf"
 
         run_benchmarks
