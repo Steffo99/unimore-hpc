@@ -351,6 +351,27 @@ __host__ int main(int argc, char** argv)
 
 		// Y = cudaMemcpy();
 
+		debug("[CUDA] Freeing A...");
+		if(cudaFree(A)) {
+			debug("[CUDA] Could not free A!");
+			return 1;
+		}
+		debug("[CUDA] Freed A!");
+
+		debug("[CUDA] Freeing X...");
+		if(cudaFree(X)) {
+			debug("[CUDA] Could not free X!");
+			return 1;
+		}
+		debug("[CUDA] Freed X!");
+
+		debug("[CUDA] Freeing Y...");
+		if(cudaFree(Y)) {
+			debug("[CUDA] Could not free Y!");
+			return 1;
+		}
+		debug("[CUDA] Freed Y!");
+
 		/*
 		polybench_prevent_dce(
 			print_array(Y)
