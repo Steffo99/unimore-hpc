@@ -8,7 +8,7 @@ run_benchmarks() {
     do
         exet=$(./atax.elf 2> /dev/null)
         totalt=$(awk "BEGIN{print $totalt+$exet}")
-        echo -n "."
+        echo -n "*"
         # echo "Run #$i: " $(awk "BEGIN{printf(\"%.3g\", $exet)}") "seconds"
     done
 
@@ -16,7 +16,7 @@ run_benchmarks() {
     echo "  Average of $runs runs: " $(awk "BEGIN{printf(\"%.3g\", $avgt)}") "seconds"
 }
 
-for dataset in EXTRALARGE_DATASET LARGE_DATASET STANDARD_DATASET SMALL_DATASET MINI_DATASET
+for dataset in MINI_DATASET SMALL_DATASET STANDARD_DATASET LARGE_DATASET EXTRALARGE_DATASET
 do
     for c in $(seq 0 3)
     do
@@ -34,7 +34,9 @@ do
 
         echo "Flags: $cxxflags"
         make --silent "clean"
+        echo -n "C"
         make --silent "EXTRA_CXXFLAGS=$cxxflags" "atax.elf"
+        echo -n "B"
 
         run_benchmarks
     done

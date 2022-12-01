@@ -40,4 +40,4 @@ bench:
 	./.bench.sh
 
 clean:
-	rm *.elf
+	rm -f *.elf

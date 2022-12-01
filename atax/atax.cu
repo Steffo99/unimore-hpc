@@ -304,10 +304,13 @@ __global__ static void kernel_atax_cuda(DATA_TYPE* A, DATA_TYPE* X, DATA_TYPE* Y
 	// Have each thread perform the previously determined number of iterations
 	for(int stride = 0; stride < perThread; stride++) 
 	{
+		// Iterate over x; y is not parallelized
 		unsigned int x = threads * stride + blockThreadIdx;
 		
+		// Prevent the thread from accessing unallocated memory
 		if(x < NX) 
 		{
+			// The same tmp as earlier
 			DATA_TYPE tmp = 0;
 
 			for (unsigned int y = 0; y < NX; y++) 
@@ -317,6 +320,8 @@ __global__ static void kernel_atax_cuda(DATA_TYPE* A, DATA_TYPE* X, DATA_TYPE* Y
 
 			for (unsigned int y = 0; y < NX; y++) 
 			{
+				// THIS DOES NOT WORK ON THE NANO, AS IT IS TOO OLD TO SUPPORT ATOMIC ADDITION WITH DOUBLES!
+				// If you want to use the Nano, swap this for something else, or change atax.hu to use float instead of double
 				atomicAdd(&Y[x], A[a_index(x, y)] * tmp);
 			}
 		}
@@ -394,8 +399,10 @@ __host__ int main(int argc, char** argv)
 		DATA_TYPE* A;
 		DATA_TYPE* X;
 		DATA_TYPE* Y;
-		DATA_TYPE* host_A = new DATA_TYPE[NX * NY];
-		DATA_TYPE* host_X = new DATA_TYPE[NY];
+		#ifdef HPC_DEBUG
+			DATA_TYPE* host_A = new DATA_TYPE[NX * NY];
+			DATA_TYPE* host_X = new DATA_TYPE[NY];
+		#endif
 		DATA_TYPE* host_Y = new DATA_TYPE[NX];
 		
 		print_debug("[CUDA] Allocating A...");
@@ -428,7 +435,7 @@ __host__ int main(int argc, char** argv)
 		#endif
 
 		print_debug("[Init] Initializing...");
-		init_array_cuda<<<32, 32>>>((double*) A, (double*) X, (double*) Y);
+		init_array_cuda<<<32, 32>>>((DATA_TYPE*) A, (DATA_TYPE*) X, (DATA_TYPE*) Y);
 		if(cudaError_t err = cudaGetLastError())
 		{
 			print_cudaError(err, "[Init] Failed to execute kernel!");
@@ -442,22 +449,24 @@ __host__ int main(int argc, char** argv)
 		#endif
 
 		print_debug("[Kernel] Running...");
-		kernel_atax_cuda<<<32, 32>>>((double*) A, (double*) X, (double*) Y);
+		kernel_atax_cuda<<<32, 32>>>((DATA_TYPE*) A, (DATA_TYPE*) X, (DATA_TYPE*) Y);
 		print_debug("[Kernel] Complete!");
 
-		print_debug("[CUDA] Copying A back...");
-		if(cudaError_t err = cudaMemcpy(host_A, A, sizeof(DATA_TYPE) * NX * NY, cudaMemcpyDeviceToHost)) {
-			print_cudaError(err, "[CUDA] Could copy A back!");
-			return 1;
-		};
-		print_debug("[CUDA] Copied A back!");
+		#ifdef HPC_DEBUG
+			print_debug("[CUDA] Copying A back...");
+			if(cudaError_t err = cudaMemcpy(host_A, A, sizeof(DATA_TYPE) * NX * NY, cudaMemcpyDeviceToHost)) {
+				print_cudaError(err, "[CUDA] Could copy A back!");
+				return 1;
+			};
+			print_debug("[CUDA] Copied A back!");
 
-		print_debug("[CUDA] Copying X back...");
-		if(cudaError_t err = cudaMemcpy(host_X, X, sizeof(DATA_TYPE) * NY, cudaMemcpyDeviceToHost)) {
-			print_cudaError(err, "[CUDA] Could copy X back!");
-			return 1;
-		};
-		print_debug("[CUDA] Copied X back!");
+			print_debug("[CUDA] Copying X back...");
+			if(cudaError_t err = cudaMemcpy(host_X, X, sizeof(DATA_TYPE) * NY, cudaMemcpyDeviceToHost)) {
+				print_cudaError(err, "[CUDA] Could copy X back!");
+				return 1;
+			};
+			print_debug("[CUDA] Copied X back!");
+		#endif
 
 		print_debug("[CUDA] Copying Y back...");
 		if(cudaError_t err = cudaMemcpy(host_Y, Y, sizeof(DATA_TYPE) * NX, cudaMemcpyDeviceToHost)) {
