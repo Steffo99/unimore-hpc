@@ -226,6 +226,7 @@ __global__ static void init_array_cuda(DATA_TYPE* A, DATA_TYPE* X, DATA_TYPE* Y)
  * 
  * To be called on the CPU (uses the `__host__` qualifier).
  */
+#ifdef HPC_DEBUG
 __host__ static void print_array(DATA_TYPE* Z, unsigned int size)
 {
 	for (unsigned int z = 0; z < size; z++) 
@@ -234,6 +235,7 @@ __host__ static void print_array(DATA_TYPE* Z, unsigned int size)
 	}
 	fprintf(stderr, "\n");
 }
+#endif
 
 
 /**
@@ -349,7 +351,7 @@ __host__ int main(int argc, char** argv)
 
 		DATA_TYPE* A = new DATA_TYPE[NX * NY];
 		DATA_TYPE* X = new DATA_TYPE[NY];
-		DATA_TYPE* Y = new DATA_TYPE[NX];
+		volatile DATA_TYPE* Y = new DATA_TYPE[NX];
 
 		print_debug("[Pointers] Allocated!");
 
@@ -359,7 +361,7 @@ __host__ int main(int argc, char** argv)
 		#endif
 
 		print_debug("[Init] Initializing...");
-		init_array(A, X, Y);
+		init_array(A, X, (double*) Y);
 		print_debug("[Init] Initialized!");
 
 		#ifndef HPC_INCLUDE_INIT
@@ -368,7 +370,7 @@ __host__ int main(int argc, char** argv)
 		#endif
 
 		print_debug("[Kernel] Running...");
-		kernel_atax(A, X, Y);
+		kernel_atax(A, X, (double*) Y);
 		print_debug("[Kernel] Completed!");
 
 		print_debug("[Benchmark] Stopping...");
@@ -385,12 +387,6 @@ __host__ int main(int argc, char** argv)
 			print_array(Y, NX);
 		#endif
 
-		print_debug("[Verify] Printing...");
-		polybench_prevent_dce(
-			print_array(Y, NX)
-		);
-		print_debug("[Verify] Done!");
-
 	#else
 	
 		print_debug("[Mode] Host-and-device, CUDA");
@@ -403,7 +399,7 @@ __host__ int main(int argc, char** argv)
 			DATA_TYPE* host_A = new DATA_TYPE[NX * NY];
 			DATA_TYPE* host_X = new DATA_TYPE[NY];
 		#endif
-		DATA_TYPE* host_Y = new DATA_TYPE[NX];
+		volatile DATA_TYPE* host_Y = new DATA_TYPE[NX];
 		
 		print_debug("[CUDA] Allocating A...");
 		if(cudaError_t err = cudaMalloc((void**)&A, sizeof(DATA_TYPE) * NX * NY)) 
@@ -429,7 +425,7 @@ __host__ int main(int argc, char** argv)
 		}
 		print_debug("[CUDA] Allocated Y!");
 
-		#ifdef POLYBENCH_INCLUDE_INIT
+		#ifdef HPC_INCLUDE_INIT
 			print_debug("[Benchmark] Starting...");
 			polybench_start_instruments;
 		#endif
@@ -443,7 +439,7 @@ __host__ int main(int argc, char** argv)
 		}
 		print_debug("[Init] Complete!");
 
-		#ifndef POLYBENCH_INCLUDE_INIT
+		#ifndef HPC_INCLUDE_INIT
 			print_debug("[Benchmark] Starting...");
 			polybench_start_instruments;
 		#endif
@@ -469,7 +465,7 @@ __host__ int main(int argc, char** argv)
 		#endif
 
 		print_debug("[CUDA] Copying Y back...");
-		if(cudaError_t err = cudaMemcpy(host_Y, Y, sizeof(DATA_TYPE) * NX, cudaMemcpyDeviceToHost)) {
+		if(cudaError_t err = cudaMemcpy((void*) host_Y, Y, sizeof(DATA_TYPE) * NX, cudaMemcpyDeviceToHost)) {
 			print_cudaError(err, "[CUDA] Could copy Y back!");
 			return 1;
 		};
@@ -507,15 +503,8 @@ __host__ int main(int argc, char** argv)
 			print_debug("[Debug] Displaying X:");
 			print_array(host_X, NY);
 			print_debug("[Debug] Displaying Y:");
-			print_array(host_Y, NX);
+			print_array((double*) host_Y, NX);
 		#endif
-
-		print_debug("[Verify] Printing...");
-		polybench_prevent_dce(
-			print_array(host_Y, NX)
-		);
-		print_debug("[Verify] Done!");
-
 	#endif
 
 	return 0;
