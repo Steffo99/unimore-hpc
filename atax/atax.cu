@@ -66,27 +66,16 @@ __host__ inline static void print_cudaError(cudaError_t err, std::string txt) {
 #ifndef HPC_USE_CUDA
 __host__ static void init_array(DATA_TYPE* A, DATA_TYPE* X, DATA_TYPE* Y)
 {
-	/* X = [ 3.14, 6.28, 9.42, ... ] */
 	for (unsigned int y = 0; y < NY; y++) 
 	{
 		X[y] = y * M_PI;
 	}
 
-	/* Y = [ 0.00, 0.00, 0.00, ... ] */
 	for (unsigned int x = 0; x < NY; x++) 
 	{
 		Y[x] = 0;
 	}
 
-	/*
-	 *	A = [
-	 *	  [       0,       0,       0,       0, ... ],
-	 *	  [  1 / NX,  2 / NX,  3 / NX,  4 / NX, ... ],
-	 *	  [  2 / NX,  4 / NX,  6 / NX,  8 / NX, ... ],
-	 *	  [  3 / NX,  6 / NX,  9 / NX, 12 / NX, ... ],
-	 *	  ...
-	 *	]
-	 */
 	for (unsigned int x = 0; x < NX; x++) 
 	{
 		for (unsigned int y = 0; y < NY; y++) 
