@@ -71,7 +71,7 @@ __host__ static void init_array(DATA_TYPE* A, DATA_TYPE* X, DATA_TYPE* Y)
 		X[y] = y * M_PI;
 	}
 
-	for (unsigned int x = 0; x < NY; x++) 
+	for (unsigned int x = 0; x < NX; x++) 
 	{
 		Y[x] = 0;
 	}
