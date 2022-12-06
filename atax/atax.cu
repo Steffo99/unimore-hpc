@@ -350,7 +350,7 @@ __host__ int main(int argc, char** argv)
 		#endif
 
 		print_debug("[Init] Initializing...");
-		init_array(A, X, (double*) Y);
+		init_array(A, X, (DATA_TYPE*) Y);
 		print_debug("[Init] Initialized!");
 
 		#ifndef HPC_INCLUDE_INIT
@@ -359,7 +359,7 @@ __host__ int main(int argc, char** argv)
 		#endif
 
 		print_debug("[Kernel] Running...");
-		kernel_atax(A, X, (double*) Y);
+		kernel_atax(A, X, (DATA_TYPE*) Y);
 		print_debug("[Kernel] Completed!");
 
 		print_debug("[Benchmark] Stopping...");
