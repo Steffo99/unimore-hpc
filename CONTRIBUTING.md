@@ -31,3 +31,4 @@ Ho configurato il [Makefile](OpenMP/linear-algebra/kernels/atax/Makefile) con un
    ```
 
 > Nota: funziona solo su sistemi UNIX-like!
+> Nota2: ricordarsi di fare module load cuda e assegnare poi il giusto path a nvcc (sia su .vscode/c_cpp_properties.json sia nel Makefile)
