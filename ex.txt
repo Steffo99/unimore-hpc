@@ -1,0 +1,46 @@
+--------------------------------------------------------
+d13a9b786a53d5195ae17ef7afa776e2600ce8e0
+Experiment after changing a index of the vector Y
+nothing special changed but i place it here.
+Performed on jetson nano with atomic add on float number.
+
+lags: -DMINI_DATASET
+CB***  Average of 3 runs:  1.03e-05 seconds
+Flags: -DMINI_DATASET -DHPC_INCLUDE_INIT
+CB***  Average of 3 runs:  1.27e-05 seconds
+Flags: -DMINI_DATASET -DHPC_USE_CUDA
+CB***  Average of 3 runs:  0.00123 seconds
+Flags: -DMINI_DATASET -DHPC_INCLUDE_INIT -DHPC_USE_CUDA
+CB***  Average of 3 runs:  0.00161 seconds
+Flags: -DSMALL_DATASET
+CB***  Average of 3 runs:  0.0014 seconds
+Flags: -DSMALL_DATASET -DHPC_INCLUDE_INIT
+CB***  Average of 3 runs:  0.00344 seconds
+Flags: -DSMALL_DATASET -DHPC_USE_CUDA
+CB***  Average of 3 runs:  0.00971 seconds
+Flags: -DSMALL_DATASET -DHPC_INCLUDE_INIT -DHPC_USE_CUDA
+CB***  Average of 3 runs:  0.0112 seconds
+Flags: -DSTANDARD_DATASET
+CB***  Average of 3 runs:  0.0876 seconds
+Flags: -DSTANDARD_DATASET -DHPC_INCLUDE_INIT
+CB***  Average of 3 runs:  0.188 seconds
+Flags: -DSTANDARD_DATASET -DHPC_USE_CUDA
+CB***  Average of 3 runs:  0.201 seconds
+Flags: -DSTANDARD_DATASET -DHPC_INCLUDE_INIT -DHPC_USE_CUDA
+CB***  Average of 3 runs:  0.0647 seconds
+Flags: -DLARGE_DATASET
+CB***  Average of 3 runs:  0.35 seconds
+Flags: -DLARGE_DATASET -DHPC_INCLUDE_INIT
+CB***  Average of 3 runs:  0.746 seconds
+Flags: -DLARGE_DATASET -DHPC_USE_CUDA
+CB***  Average of 3 runs:  0.26 seconds
+Flags: -DLARGE_DATASET -DHPC_INCLUDE_INIT -DHPC_USE_CUDA
+CB***  Average of 3 runs:  0.278 seconds
+Flags: -DEXTRALARGE_DATASET
+CB***  Average of 3 runs:  0.789 seconds
+Flags: -DEXTRALARGE_DATASET -DHPC_INCLUDE_INIT
+CB***  Average of 3 runs:  1.68 seconds
+Flags: -DEXTRALARGE_DATASET -DHPC_USE_CUDA
+CB***  Average of 3 runs:  0.647 seconds
+Flags: -DEXTRALARGE_DATASET -DHPC_INCLUDE_INIT -DHPC_USE_CUDA
+CB***  Average of 3 runs:  0.665 seconds
