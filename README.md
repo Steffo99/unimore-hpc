@@ -17,55 +17,15 @@
 
 ## Results
 
-```console
-steffo@nitro:/s/D/W/S/u/atax[130]$ make bench
-./.bench.sh
-Flags: -DMINI_DATASET
-CB***  Average of 3 runs:  3.33e-06 seconds
-Flags: -DMINI_DATASET -DHPC_INCLUDE_INIT
-CB***  Average of 3 runs:  8.33e-06 seconds
-Flags: -DMINI_DATASET -DHPC_USE_CUDA
-CB***  Average of 3 runs:  6.8e-05 seconds
-Flags: -DMINI_DATASET -DHPC_INCLUDE_INIT -DHPC_USE_CUDA
-CB***  Average of 3 runs:  7.2e-05 seconds
-Flags: -DSMALL_DATASET
-CB***  Average of 3 runs:  0.000563 seconds
-Flags: -DSMALL_DATASET -DHPC_INCLUDE_INIT
-CB***  Average of 3 runs:  0.00139 seconds
-Flags: -DSMALL_DATASET -DHPC_USE_CUDA
-CB***  Average of 3 runs:  0.000229 seconds
-Flags: -DSMALL_DATASET -DHPC_INCLUDE_INIT -DHPC_USE_CUDA
-CB***  Average of 3 runs:  0.000309 seconds
-Flags: -DSTANDARD_DATASET
-CB***  Average of 3 runs:  0.0276 seconds
-Flags: -DSTANDARD_DATASET -DHPC_INCLUDE_INIT
-CB***  Average of 3 runs:  0.0664 seconds
-Flags: -DSTANDARD_DATASET -DHPC_USE_CUDA
-CB***  Average of 3 runs:  0.00938 seconds
-Flags: -DSTANDARD_DATASET -DHPC_INCLUDE_INIT -DHPC_USE_CUDA
-CB***  Average of 3 runs:  0.0128 seconds
-Flags: -DLARGE_DATASET
-CB***  Average of 3 runs:  0.109 seconds
-Flags: -DLARGE_DATASET -DHPC_INCLUDE_INIT
-CB***  Average of 3 runs:  0.243 seconds
-Flags: -DLARGE_DATASET -DHPC_USE_CUDA
-CB***  Average of 3 runs:  0.0449 seconds
-Flags: -DLARGE_DATASET -DHPC_INCLUDE_INIT -DHPC_USE_CUDA
-CB***  Average of 3 runs:  0.0459 seconds
-Flags: -DEXTRALARGE_DATASET
-CB***  Average of 3 runs:  0.248 seconds
-Flags: -DEXTRALARGE_DATASET -DHPC_INCLUDE_INIT
-CB***  Average of 3 runs:  0.584 seconds
-Flags: -DEXTRALARGE_DATASET -DHPC_USE_CUDA
-CB***  Average of 3 runs:  0.0971 seconds
-Flags: -DEXTRALARGE_DATASET -DHPC_INCLUDE_INIT -DHPC_USE_CUDA
-CB***  Average of 3 runs:  0.108 seconds
-```
+Results can be read in the ex.txt file where we stored all the 
+experiments done.
+
 
 ### Validation
 
 * Compiler used: **nvcc**
-* Device used: `NVIDIA GTX 1070` with `525.60.11` driver
+* Device used: `JETSON NANO DEVELOPER KIT` 
+* Built on: Mon_Mar_11_22:13:24_CDT_2019 Cuda compilation tools, release 10.0, V10.0.326
 
 To reproduce the obtained results:
 
@@ -78,7 +38,7 @@ To reproduce the obtained results:
 2. Checkout the exact commit the tests were executed on:
 
     ```console
-    $ git checkout 2d6448e5aa3707370b837a37db4eb880ca06ddb7
+    $ git checkout d13a9b786a53d5195ae17ef7afa776e2600ce8e0
     ```
 
 3. Access our group's assigned folder:
