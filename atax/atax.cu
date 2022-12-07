@@ -53,7 +53,6 @@ __host__ inline static void print_cudaError(cudaError_t err, std::string txt) {
 }
 #endif
 
-
 /**
  * Initialize the arrays to be used in the computation:
  * 
@@ -241,7 +240,8 @@ __host__ static void print_array(DATA_TYPE* Z, unsigned int size)
  * 
  * Parallelizing this is the goal of the assignment.
  * 
- * To be called on the CPU (uses the `__host__` qualifier).
+ * To be called on the CPU uses the `__host__` qualifier otherwise
+ * for the GPU uses the `__global__` qualifier.
  */
 #ifndef HPC_USE_CUDA
 __host__ static void kernel_atax(DATA_TYPE* A, DATA_TYPE* X, DATA_TYPE* Y)
@@ -261,26 +261,8 @@ __host__ static void kernel_atax(DATA_TYPE* A, DATA_TYPE* X, DATA_TYPE* Y)
 		}
 	}
 }
-#endif
+#else
 
-
-/**
- * Compute ATAX :
- * - A is the input matrix
- * - X is an input vector
- * - Y is the result vector
- * 
- * In particular:
- * ```
- * A * (A * X) = Y
- * ```
- * Wait, there's no transposition here?!?
- * 
- * Parallelizing this is the goal of the assignment.
- * 
- * To be called on the device as a kernel (uses the `__global__` qualifier).
- */
-#ifdef HPC_USE_CUDA
 __global__ static void kernel_atax_cuda(DATA_TYPE* A, DATA_TYPE* X, DATA_TYPE* Y)
 {
 	// Find out how many threads there are
