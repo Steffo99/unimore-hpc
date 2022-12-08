@@ -16,13 +16,13 @@ CXXFLAGS+= ${EXTRA_CXXFLAGS}
 # CUDA_HOME:=/usr/local/cuda-10.0
 CUDA_HOME:=/opt/cuda
 # Specify the directory of the nvc compiler
-NVCC:=$(CUDA_HOME)/bin/nvcc
+NVCC:=/usr/local/cuda-10.0/bin/nvcc
 # Specify the flags for the nvc compiler
 NVCFLAGS:=$(CXXFLAGS) $(NVOPT)
 
 # Optimize for @Steffo's NVIDIA GTX 1070
-NVCFLAGS+= -arch=compute_61
-NVCFLAGS+= -code=sm_61
+# NVCFLAGS+= -arch=compute_61
+# NVCFLAGS+= -code=sm_61
 
 
 %.elf: %.cu.o polybench.cu.o
