@@ -1,4 +1,4 @@
-\[ **Stefano Pigozzi** + **Caterina Gazzotti** + **Fabio Zanichelli** | Topic OpenMP | High Performance Computing Laboratory | Unimore \]
+\[ **Stefano Pigozzi** + **Caterina Gazzotti** + **Fabio Zanichelli** | Topic CUDA | High Performance Computing Laboratory | Unimore \]
 
 # C code optimization using NVIDIA CUDA
 
