@@ -14,25 +14,38 @@ void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in, const int width,
         {-1, 0, 1}
     };
 
-    for (int y = 1; y < height - 1; y++)
+    esternoY:
+    for (int y = 0; y < height - 2; y++)
     {
-        for (int x = 1; x < width - 1; x++)
+        esternoX:
+        for (int x = 0; x < width - 2; x++)
         {
             int dx = 0;
             int dy = 0;
 
+            internoY:
             for (int k = 0; k < 3; k++)
             {
+                const int inYOffset = (y + k) * width;
+
+                internoX:
                 for (int z = 0; z < 3; z++)
                 {
-                    const int address = (y + k - 1) * width + x + z - 1;
+                    const int inXOffset = x + z;
 
-                    dx += sobelFilter[k][z] * in[address];
-                    dy += sobelFilter[z][k] * in[address];
+                    const int inOffset = inYOffset + inXOffset;
+                    const int inElement = in[inOffset];
+
+                    dx += sobelFilter[k][z] * inElement;
+                    dy += sobelFilter[z][k] * inElement;
                 }
             }
 
-            out[y * width + x] = sqrt((float)((dx * dx) + (dy * dy)));
+            const int outYOffset = (y + 1) * width;
+            const int outXOffset = (x + 1);
+            const int outOffset = outYOffset + outXOffset;
+            
+            out[outOffset] = sqrt((float)((dx * dx) + (dy * dy)));
         }
     }
 }
