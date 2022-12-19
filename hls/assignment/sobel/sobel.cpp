@@ -3,8 +3,8 @@
 
 void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in, const int width, const int height)
 {
-#pragma HLS INTERFACE axis port=out bundle=boutput
-#pragma HLS INTERFACE axis port=in bundle=binput
+#pragma HLS INTERFACE axis port=out
+#pragma HLS INTERFACE axis port=in
 #pragma HLS INTERFACE s_axilite port=width bundle=bwidth
 #pragma HLS INTERFACE s_axilite port=height bundle=bheight
 
