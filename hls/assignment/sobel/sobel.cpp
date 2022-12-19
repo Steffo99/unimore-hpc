@@ -1,9 +1,9 @@
 #include <math.h>
 #include "sobel.h"
 
-void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in, int width, int height)
+void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in, const int width, const int height)
 {
-    int sobelFilter[3][3] = {
+    const int sobelFilter[3][3] = {
         {-1, 0, 1}, 
         {-2, 0, 2}, 
         {-1, 0, 1}
