@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "sobel.h"
-#include "test.h"
+#include "main_testbench.h"
 
 uint8_t output[HEIGHT*WIDTH];
 
