@@ -2,12 +2,13 @@
 #include <math.h>
 #include "sobel.h"
 
-void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in, const int width, const int height)
+#define WIDTH 512
+#define HEIGHT 512
+
+void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in)
 {
 #pragma HLS INTERFACE m_axi port=out offset=slave bundle=bout
 #pragma HLS INTERFACE m_axi port=in offset=slave bundle=bin
-#pragma HLS INTERFACE s_axilite port=width bundle=bwidth
-#pragma HLS INTERFACE s_axilite port=height bundle=bheight
 
     const int sobelFilter[3][3] = {
         {-1, 0, 1}, 
@@ -16,17 +17,18 @@ void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in, const int width,
     };
 
     // Carica le prime tre righe nel buffer
-    uint8_t inBuffer[3*height];
-    memcpy(inBuffer, in, 3*height*sizeof(uint8_t));
+    uint8_t inBuffer[3*HEIGHT];
+    memcpy(inBuffer, in, 3*HEIGHT*sizeof(uint8_t));
 
     esternoY:
-    for (int y = 0; y < height - 2; y++)
+    for (int y = 0; y < HEIGHT - 2; y++)
     {
-    #pragma HLS PIPELINE
 
         esternoX:
-        for (int x = 0; x < width - 2; x++)
+        for (int x = 0; x < WIDTH - 2; x++)
         {
+        #pragma HLS PIPELINE
+
             int dx = 0;
             int dy = 0;
 
@@ -35,7 +37,7 @@ void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in, const int width,
             {
             #pragma HLS UNROLL
 
-                const int inYOffset = ((y + k) % 3) * width;
+                const int inYOffset = ((y + k) % 3) * WIDTH;
 
                 internoX:
                 for (int z = 0; z < 3; z++)
@@ -52,13 +54,13 @@ void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in, const int width,
                 }
             }
 
-            const int outYOffset = (y + 1) * width;
+            const int outYOffset = (y + 1) * WIDTH;
             const int outXOffset = (x + 1);
             const int outOffset = outYOffset + outXOffset;
 
             out[outOffset] = sqrt((float)((dx * dx) + (dy * dy)));
         }
 
-        memcpy(inBuffer, in + (y % 3) * height, height*sizeof(uint8_t));
+        memcpy(inBuffer, in + (y % 3) * HEIGHT, HEIGHT*sizeof(uint8_t));
     }
 }
