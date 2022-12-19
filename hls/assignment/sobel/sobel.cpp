@@ -15,6 +15,8 @@ void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in)
         {-2, 0, 2}, 
         {-1, 0, 1}
     };
+    #pragma HLS ARRAY_PARTITION variable=sobelFilter complete dim=0
+
 
     // Carica le prime tre righe nel buffer
     uint8_t inBuffer[3*HEIGHT];
