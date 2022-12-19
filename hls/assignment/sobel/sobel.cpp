@@ -25,8 +25,10 @@ void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in, const int width,
             {
                 for (int z = 0; z < 3; z++)
                 {
-                    dx += sobelFilter[k][z] * in[(y + k - 1) * width + x + z - 1];
-                    dy += sobelFilter[z][k] * in[(y + k - 1) * width + x + z - 1];
+                    const int address = (y + k - 1) * width + x + z - 1;
+
+                    dx += sobelFilter[k][z] * in[address];
+                    dy += sobelFilter[z][k] * in[address];
                 }
             }
 
