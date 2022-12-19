@@ -1,3 +1,4 @@
+#include <cstring>
 #include <math.h>
 #include "sobel.h"
 
@@ -13,6 +14,10 @@ void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in, const int width,
         {-2, 0, 2}, 
         {-1, 0, 1}
     };
+
+    // Carica le prime tre righe nel buffer
+    uint8_t inBuffer[3*height];
+    memcpy(inBuffer, in, 3*height*sizeof(uint8_t));
 
     esternoY:
     for (int y = 0; y < height - 2; y++)
@@ -30,7 +35,7 @@ void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in, const int width,
             {
             #pragma HLS UNROLL
 
-                const int inYOffset = (y + k) * width;
+                const int inYOffset = ((y + k) % 3) * width;
 
                 internoX:
                 for (int z = 0; z < 3; z++)
@@ -40,7 +45,7 @@ void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in, const int width,
                     const int inXOffset = x + z;
 
                     const int inOffset = inYOffset + inXOffset;
-                    const int inElement = in[inOffset];
+                    const int inElement = inBuffer[inOffset];
 
                     dx += sobelFilter[k][z] * inElement;
                     dy += sobelFilter[z][k] * inElement;
@@ -53,5 +58,7 @@ void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in, const int width,
 
             out[outOffset] = sqrt((float)((dx * dx) + (dy * dy)));
         }
+
+        memcpy(inBuffer, in + (y % 3) * height, height*sizeof(uint8_t));
     }
 }
