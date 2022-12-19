@@ -17,8 +17,8 @@ void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in)
     };
 
     // Carica le prime tre righe nel buffer
-    uint8_t inBuffer[3*HEIGHT];
-    memcpy(inBuffer, in, 3*HEIGHT*sizeof(uint8_t));
+    uint8_t inBuffer[3*WIDTH];
+    memcpy(inBuffer, in, 3*WIDTH*sizeof(uint8_t));
 
     esternoY:
     for (int y = 0; y < HEIGHT - 2; y++)
@@ -37,14 +37,14 @@ void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in)
             {
             #pragma HLS UNROLL
 
-                const int inYOffset = ((y + k) % 3) * WIDTH;
+                const int inYOffset = (y + k) * WIDTH;
 
                 internoX:
                 for (int z = 0; z < 3; z++)
                 {
                 #pragma HLS UNROLL
 
-                    const int inXOffset = x + z;
+                    const int inXOffset = (x + z) % 3;
 
                     const int inOffset = inYOffset + inXOffset;
                     const int inElement = inBuffer[inOffset];
@@ -61,6 +61,6 @@ void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in)
             out[outOffset] = sqrt((float)((dx * dx) + (dy * dy)));
         }
 
-        memcpy(inBuffer, in + (y % 3) * HEIGHT, HEIGHT*sizeof(uint8_t));
+        memcpy(inBuffer, in + y * WIDTH, WIDTH*sizeof(uint8_t));
     }
 }
