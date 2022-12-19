@@ -17,6 +17,8 @@ void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in, const int width,
     esternoY:
     for (int y = 0; y < height - 2; y++)
     {
+    #pragma HLS PIPELINE
+
         esternoX:
         for (int x = 0; x < width - 2; x++)
         {
@@ -26,11 +28,15 @@ void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in, const int width,
             internoY:
             for (int k = 0; k < 3; k++)
             {
+            #pragma HLS UNROLL
+
                 const int inYOffset = (y + k) * width;
 
                 internoX:
                 for (int z = 0; z < 3; z++)
                 {
+                #pragma HLS UNROLL
+
                     const int inXOffset = x + z;
 
                     const int inOffset = inYOffset + inXOffset;
@@ -44,7 +50,7 @@ void sobel(uint8_t *__restrict__ out, uint8_t *__restrict__ in, const int width,
             const int outYOffset = (y + 1) * width;
             const int outXOffset = (x + 1);
             const int outOffset = outYOffset + outXOffset;
-            
+
             out[outOffset] = sqrt((float)((dx * dx) + (dy * dy)));
         }
     }
